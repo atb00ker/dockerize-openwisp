@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: openwisp-controller
+  labels:
+      app: openwisp-controller
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8000
+      targetPort: 8000
+  selector:
+    app: openwisp-controller
+  externalIPs:
+    - 192.168.1.6
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openwisp-radius
+  labels:
+      app: openwisp-radius
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8002
+      targetPort: 8002
+  selector:
+    app: openwisp-radius
+  externalIPs:
+    - 192.168.1.6
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openwisp-network-topology
+  labels:
+      app: openwisp-network-topology
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8001
+      targetPort: 8001
+  selector:
+    app: openwisp-network-topology
+  externalIPs:
+    - 192.168.1.6
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openwisp-dashboard
+  labels:
+      app: openwisp-dashboard
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8003
+      targetPort: 8003
+  selector:
+    app: openwisp-dashboard
+  externalIPs:
+    - 192.168.1.6
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  type: NodePort
+  ports:
+   - port: 5432
+  selector:
+   app: postgres

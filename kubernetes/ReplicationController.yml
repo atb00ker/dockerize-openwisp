@@ -1,0 +1,117 @@
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: openwisp-controller
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: openwisp-controller
+    spec:
+      containers:
+      - name: openwisp-controller
+        imagePullPolicy: "Always"
+        image: atb00ker/ready-to-run:openwisp-controller
+        ports:
+          - containerPort: 8000
+        envFrom:
+          - configMapRef:
+              name: common-config
+          - configMapRef:
+              name: controller-config
+      - name: redis
+        image: redis:alpine
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: openwisp-network-topology
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openwisp-network-topology
+    spec:
+      containers:
+      - name: openwisp-network-topology
+        image: atb00ker/ready-to-run:openwisp-network-topology
+        imagePullPolicy: "Always"
+        ports:
+          - containerPort: 8001
+        envFrom:
+          - configMapRef:
+              name: common-config
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: openwisp-radius
+spec:
+  replicas: 4
+  template:
+    metadata:
+      labels:
+        app: openwisp-radius
+    spec:
+      containers:
+      - name: openwisp-radius
+        image: atb00ker/ready-to-run:openwisp-radius
+        imagePullPolicy: "Always"
+        ports:
+          - containerPort: 8002
+        envFrom:
+          - configMapRef:
+              name: common-config
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: openwisp-dashboard
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openwisp-dashboard
+    spec:
+      containers:      
+      - name: openwisp-dashboard
+        image: atb00ker/ready-to-run:openwisp-dashboard
+        imagePullPolicy: "Always"
+        ports:
+          - containerPort: 8003
+        envFrom:
+          - configMapRef:
+              name: common-config
+
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:10-alpine
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: postgres-config
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgredb
+      volumes:
+        - name: postgredb
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim

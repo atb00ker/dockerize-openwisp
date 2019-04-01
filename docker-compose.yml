@@ -1,0 +1,150 @@
+version: "3"
+
+services:
+  controller:
+    image:  atb00ker/ready-to-run:openwisp-controller
+    build: 
+      context: build
+      dockerfile: openwisp_controller/Dockerfile
+    environment: 
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+      - PG_ENGINE=${CONTROLLER_PG_ENGINE}
+      - PG_NAME=${PG_NAME}
+      - PG_USER=${PG_USER}
+      - PG_PASS=${PG_PASS}
+      - PG_HOST=${PG_HOST}
+      - PG_PORT=${PG_PORT}
+      - DJANGO_LANGUAGE_CODE=${DJANGO_LANGUAGE_CODE}
+      - DJANGO_TIME_ZONE=${DJANGO_TIME_ZONE}
+      - DJANGO_REDIS_HOST=${DJANGO_REDIS_HOST}
+      - DJANGO_DEBUG=${DJANGO_DEBUG}
+      - DJANGO_X509_DEFAULT_CERT_VALIDITY=${DJANGO_X509_DEFAULT_CERT_VALIDITY}
+      - DJANGO_X509_DEFAULT_CA_VALIDITY=${DJANGO_X509_DEFAULT_CA_VALIDITY}
+      - DJANGO_DEFAULT_FROM_EMAIL=${DJANGO_DEFAULT_FROM_EMAIL}
+      - DJANGO_EMAIL_PORT=${DJANGO_EMAIL_PORT}
+      - DJANGO_EMAIL_BACKEND=${DJANGO_EMAIL_BACKEND}
+    deploy:
+      replicas: 2
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+    links:
+      - postgres
+      - redis
+    volumes:
+      - ${DJANGO_MEDIA_VOLUME_LOCATION}:/opt/openwisp/media
+
+  network-topology:
+    image: atb00ker/ready-to-run:openwisp-network-topology
+    build: 
+      context: build
+      dockerfile: openwisp_network_topology/Dockerfile
+    deploy:
+      replicas: 1
+    ports:
+      - "8001:8001"
+    environment:
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+      - PG_ENGINE=${PG_ENGINE}
+      - PG_NAME=${PG_NAME}
+      - PG_USER=${PG_USER}
+      - PG_PASS=${PG_PASS}
+      - PG_HOST=${PG_HOST}
+      - PG_PORT=${PG_PORT}
+      - DJANGO_LANGUAGE_CODE=${DJANGO_LANGUAGE_CODE}
+      - DJANGO_TIME_ZONE=${DJANGO_TIME_ZONE}
+      - DJANGO_REDIS_HOST=${DJANGO_REDIS_HOST}
+      - DJANGO_DEBUG=${DJANGO_DEBUG}
+      - DJANGO_DEFAULT_FROM_EMAIL=${DJANGO_DEFAULT_FROM_EMAIL}
+      - DJANGO_EMAIL_PORT=${DJANGO_EMAIL_PORT}
+      - DJANGO_EMAIL_BACKEND=${DJANGO_EMAIL_BACKEND}
+    depends_on:
+      - postgres
+    links:
+      - postgres
+
+  dashboard:
+    image: atb00ker/ready-to-run:openwisp-dashboard
+    build: 
+      context: build
+      dockerfile: openwisp_dashboard/Dockerfile
+    deploy:
+      replicas: 1
+    ports:
+      - "8003:8003"
+    environment:
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+      - PG_ENGINE=${PG_ENGINE}
+      - PG_NAME=${PG_NAME}
+      - PG_USER=${PG_USER}
+      - PG_PASS=${PG_PASS}
+      - PG_HOST=${PG_HOST}
+      - PG_PORT=${PG_PORT}
+      - DJANGO_LANGUAGE_CODE=${DJANGO_LANGUAGE_CODE}
+      - DJANGO_TIME_ZONE=${DJANGO_TIME_ZONE}
+      - DJANGO_REDIS_HOST=${DJANGO_REDIS_HOST}
+      - DJANGO_DEBUG=${DJANGO_DEBUG}
+      - DJANGO_DEFAULT_FROM_EMAIL=${DJANGO_DEFAULT_FROM_EMAIL}
+      - DJANGO_EMAIL_PORT=${DJANGO_EMAIL_PORT}
+      - DJANGO_EMAIL_BACKEND=${DJANGO_EMAIL_BACKEND}
+      - DJANGO_CORS_ORIGIN_ALLOW_ALL=${DJANGO_CORS_ORIGIN_ALLOW_ALL}
+    depends_on:
+      - postgres
+    links:
+      - postgres
+
+  radius:
+    image: atb00ker/ready-to-run:openwisp-radius
+    build: 
+      context: build
+      dockerfile: openwisp_radius/Dockerfile
+    deploy:
+      replicas: 3
+    ports:
+      - "8002:8002"
+    environment:
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+      - PG_ENGINE=${PG_ENGINE}
+      - PG_NAME=${PG_NAME}
+      - PG_USER=${PG_USER}
+      - PG_PASS=${PG_PASS}
+      - PG_HOST=${PG_HOST}
+      - PG_PORT=${PG_PORT}
+      - DJANGO_LANGUAGE_CODE=${DJANGO_LANGUAGE_CODE}
+      - DJANGO_TIME_ZONE=${DJANGO_TIME_ZONE}
+      - DJANGO_REDIS_HOST=${DJANGO_REDIS_HOST}
+      - DJANGO_DEBUG=${DJANGO_DEBUG}
+      - DJANGO_DEFAULT_FROM_EMAIL=${DJANGO_DEFAULT_FROM_EMAIL}
+      - DJANGO_EMAIL_PORT=${DJANGO_EMAIL_PORT}
+      - DJANGO_EMAIL_BACKEND=${DJANGO_EMAIL_BACKEND}
+    depends_on:
+      - postgres
+    links:
+      - postgres
+
+  redis:
+    image: redis:alpine
+    deploy:
+      replicas: 1
+    ports:
+      - "6379:6379"
+
+  postgres:
+    image: postgres:10-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${PG_NAME}
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_PASSWORD=${PG_PASS}
+
+volumes:
+  postgres_data: {}

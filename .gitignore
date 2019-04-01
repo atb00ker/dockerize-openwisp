@@ -8,7 +8,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
 develop-eggs/
 dist/
 downloads/
@@ -52,7 +51,6 @@ coverage.xml
 *.pot
 
 # Django stuff:
-*.log
 local_settings.py
 db.sqlite3
 
@@ -82,7 +80,6 @@ celerybeat-schedule
 *.sage.py
 
 # Environments
-.env
 .venv
 env/
 venv/
@@ -102,3 +99,9 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+.vagrant/
+.terraform/
+*.tfstate
+*.tfstate.backup
+media/

@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: openwisp
+  POSTGRES_USER: admin
+  POSTGRES_PASSWORD: admin
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: common-config
+data:
+  DJANGO_SECRET_KEY: MY_COMPANY_SECRET_KEY
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: controller-config
+data:
+  DJANGO_REDIS_HOST: localhost
