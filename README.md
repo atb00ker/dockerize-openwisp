@@ -54,23 +54,26 @@ $ terraform apply
 
 Note: You may need to set authentication for your cluster in `terraform/kubes-provider.tf` according to your setup. Find more about authentication from official documentation [here](https://www.terraform.io/docs/providers/kubernetes/index.html#authentication).
 
-## Build
 
-Guide to build images again (with modification or different environment variables).
+### Docker Compose
 
-**Note:** Building all the images take a while. If you only want to test the `docker-compose` file. Please pull the containers before running the `docker-compose up` command. Images are available on docker hub and can be pulled from the following links:
+Testing on docker-compose is relatively less resource and time consuming.
 
-- OpenWISP Dashboard - `atb00ker/ready-to-run:openwisp-dashboard`
-- OpenWISP Radius - `atb00ker/ready-to-run:openwisp-radius`
-- OpenWISP Controller - `atb00ker/ready-to-run:openwisp-controller`
-- OpenWISP Network Topology - `atb00ker/ready-to-run:openwisp-network-topology`
+1. Install docker-compose: `pip install docker-compose`
+2. (optional) Congfigure: Manipulate all the values in the .env file as you desire & run `make_secret_key.py` to generate a new secret key.
+3. Pull all the required images to avoid building them. (which is time consuming task.)
 
+```bash
+docker pull atb00ker/ready-to-run:openwisp-dashboard
+docker pull atb00ker/ready-to-run:openwisp-radius
+docker pull atb00ker/ready-to-run:openwisp-controller
+docker pull atb00ker/ready-to-run:openwisp-network-topology
+```
 
-##### Steps:
-1. (optional) Congfigure: Manipulate all the values in the `.env` file as you desire.
-2. Run `make_secret_key.py` to generate a new secret key.
-3. You can build the containers with `docker-compose build`. 
-4. After that do `docker-compose up`, when the containers are ready, you can test them out by going to: 
+4. Run containers: (inside root of the repository) `docker-compose up`
+It will take a while for the containers to start up. (~1 minute)
+
+5. After that do `docker-compose up`, when the containers are ready, you can test them out by going to: 
 - openwisp-controller: `127.0.0.1:8000/admin`
 - openwisp-network-topology: `127.0.0.1:8001/admin`
 - openwisp-radius: `127.0.0.1:8002/admin`
@@ -81,3 +84,19 @@ Default username & password are `admin`.
 **(`pipenv`)Note:** Remember changing the values in `.env` file does nothing because `.env` is also a special file in `pipenv`, you need to change the values in `.env` file then re-activate environment to ensure that the changes reflect.
 
 **Note:** Currently, `openwisp-controller` is not configured with `postGIS` and will not retain data.
+
+## Build (Developers)
+
+Guide to build images again (with modification or different environment variables).
+
+##### Steps:
+
+1. Install docker-compose: `pip install docker-compose`
+2. (optional) Congfigure: Manipulate all the values in the .env file as you desire & run `make_secret_key.py` to generate a new secret key.
+3. Make desired changes in the Dockerfiles.
+4. You can build the containers with `docker-compose build`. 
+5. After that do `docker-compose up`, when the containers are ready, you can test them out by going to(Default username & password are `admin`): 
+- openwisp-controller: `127.0.0.1:8000/admin`
+- openwisp-network-topology: `127.0.0.1:8001/admin`
+- openwisp-radius: `127.0.0.1:8002/admin`
+- openwisp-dashboard: `127.0.0.1:8003/admin`
