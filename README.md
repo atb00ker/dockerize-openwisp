@@ -73,11 +73,67 @@ docker pull atb00ker/ready-to-run:openwisp-network-topology
 4. Run containers: (inside root of the repository) `docker-compose up`
 It will take a while for the containers to start up. (~1 minute)
 
-5. After that do `docker-compose up`, when the containers are ready, you can test them out by going to: 
+5. When the containers are ready, you can test them out by going to: 
 - openwisp-controller: `127.0.0.1:8000/admin`
 - openwisp-network-topology: `127.0.0.1:8001/admin`
 - openwisp-radius: `127.0.0.1:8002/admin`
 - openwisp-dashboard: `127.0.0.1:8003/admin`
+
+Default username & password are `admin`.
+
+**(`pipenv`)Note:** Remember changing the values in `.env` file does nothing because `.env` is also a special file in `pipenv`, you need to change the values in `.env` file then re-activate environment to ensure that the changes reflect.
+
+**Note:** Currently, `openwisp-controller` is not configured with `postGIS` and will not retain data.
+
+### Docker Swarm (Using Docker Machine)
+
+1. Install docker: `sudo snap install docker`
+2. Install latest docker-machine: 
+
+```bash
+$ base=https://github.com/docker/machine/releases/download/v0.16.0 &&
+  curl -L $base/docker-machine-$(uname -s)-$(uname -m) >/tmp/docker-machine &&
+  sudo install /tmp/docker-machine /usr/local/bin/docker-machine
+```
+
+3. Create docker-machines:
+
+```bash
+$ docker-machine create manager1
+$ docker-machine create worker1
+$ docker-machine create worker2
+```
+
+4. Initialize Swarm:
+
+```bash
+$ docker-machine ls
+$ # Note down the IP of the manager1 node
+$ docker-machine ssh manger1
+$ docker swarm init --advertise-addr <MANAGER_IP>
+$ # Copy the join command from here
+$ exit
+$ docker-machine ssh worker1
+$ docker swarm join --token <OUTPUT_TOKEN> <MANAGER_IP:PORT>
+$ exit
+$ docker-machine ssh worker2
+$ docker swarm join --token <OUTPUT_TOKEN> <MANAGER_IP:PORT>
+$ exit
+$ docker-machine ssh manger1
+```
+
+5. Add files: we need `docker-compose.yml` and `.env` inside the manager1 container. We can simply copy data and use editor `vi` inside container to paste the files.
+
+6. (optional) Change values in `.env` file as you desire.
+7. Import environment variable: `export $(grep -v '^#' .env | xargs -0)`
+8. Run stack: `docker stack deploy --compose-file docker-compose.yml openwisp`
+9. Now, It will take a long while to pull all the images and run all the containers (~30 minutes). You can check the progress using `docker service ls` and `docker service ps openwisp_<module-name>`.
+10. After all the containers are ready, you may go to any of the IPs of the swarm and use ports as following to checkout the deployment:
+
+- openwisp-controller: `<NODE_IP>:8000/admin`
+- openwisp-network-topology: `<NODE_IP>:8001/admin`
+- openwisp-radius: `<NODE_IP>:8002/admin`
+- openwisp-dashboard: `<NODE_IP>:8003/admin`
 
 Default username & password are `admin`.
 
