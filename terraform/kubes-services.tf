@@ -13,27 +13,7 @@ resource "kubernetes_service" "openwisp-controller" {
       target_port = 8000
     }
 
-    external_ips = ["192.168.1.6"]
-    type         = "LoadBalancer"
-  }
-}
-
-resource "kubernetes_service" "openwisp-radius" {
-  metadata {
-    name = "openwisp-radius"
-  }
-
-  spec {
-    selector {
-      App = "${kubernetes_replication_controller.openwisp-radius.metadata.0.labels.App}"
-    }
-
-    port {
-      port        = 8002
-      target_port = 8002
-    }
-
-    external_ips = ["192.168.1.6"]
+    external_ips = "${var.external_ip}"
     type         = "LoadBalancer"
   }
 }
@@ -53,7 +33,27 @@ resource "kubernetes_service" "openwisp-network-topology" {
       target_port = 8001
     }
 
-    external_ips = ["192.168.1.6"]
+    external_ips = "${var.external_ip}"
+    type         = "LoadBalancer"
+  }
+}
+
+resource "kubernetes_service" "openwisp-radius" {
+  metadata {
+    name = "openwisp-radius"
+  }
+
+  spec {
+    selector {
+      App = "${kubernetes_replication_controller.openwisp-radius.metadata.0.labels.App}"
+    }
+
+    port {
+      port        = 8002
+      target_port = 8002
+    }
+
+    external_ips = "${var.external_ip}"
     type         = "LoadBalancer"
   }
 }
@@ -73,7 +73,7 @@ resource "kubernetes_service" "openwisp-dashboard" {
       target_port = 8003
     }
 
-    external_ips = ["192.168.1.6"]
+    external_ips = "${var.external_ip}"
     type         = "LoadBalancer"
   }
 }

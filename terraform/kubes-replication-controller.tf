@@ -8,7 +8,7 @@ resource "kubernetes_replication_controller" "openwisp-controller" {
   }
 
   spec {
-    replicas = 3
+    replicas = "${var.controller_instances}"
 
     selector {
       App = "openwisp-controller"
@@ -64,7 +64,7 @@ resource "kubernetes_replication_controller" "openwisp-radius" {
   }
 
   spec {
-    replicas = 4
+    replicas = "${var.radius_instances}"
 
     selector {
       App = "openwisp-radius"
@@ -109,7 +109,7 @@ resource "kubernetes_replication_controller" "openwisp-network-topology" {
   }
 
   spec {
-    replicas = 1
+    replicas = "${var.topology_instances}"
 
     selector {
       App = "openwisp-network-topology"
@@ -154,7 +154,7 @@ resource "kubernetes_replication_controller" "openwisp-dashboard" {
   }
 
   spec {
-    replicas = 1
+    replicas = "${var.dashboard_instances}"
 
     selector {
       App = "openwisp-dashboard"
