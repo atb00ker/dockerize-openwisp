@@ -111,7 +111,7 @@ services:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
       - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
       - PG_ENGINE=${PG_ENGINE}
-      - PG_NAME=${PG_NAME}
+      - PG_NAME=${RADIUS_PG_NAME}
       - PG_USER=${PG_USER}
       - PG_PASS=${PG_PASS}
       - PG_HOST=${PG_HOST}
@@ -136,13 +136,16 @@ services:
       - "6379:6379"
 
   postgres:
-    image: postgres:10-alpine
+    image: atb00ker/ready-to-run:openwisp-postgresql
+    build: 
+      context: build
+      dockerfile: openwisp_postgresql/Dockerfile
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=${PG_NAME}
+      - POSTGRES_MULTIPLE_DATABASES=${PG_NAME},${RADIUS_PG_NAME}
       - POSTGRES_USER=${PG_USER}
       - POSTGRES_PASSWORD=${PG_PASS}
 

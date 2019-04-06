@@ -8,11 +8,24 @@ RUN wget http://download.osgeo.org/geos/geos-3.7.1.tar.bz2 && tar xjf geos-3.7.1
 COPY ./openwisp_controller/requirements.txt /opt/openwisp/requirements.txt
 RUN pip install -r requirements.txt
 
+# NEXT
+# FROM python:3.7-alpine AS BASE
+
+# WORKDIR /opt/openwisp
+
+# RUN apk add --update --no-cache build-base libffi-dev openssl-dev python3-dev zlib-dev jpeg-dev musl-dev --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing gdal-dev geos-dev
+
+# COPY ./openwisp_controller/requirements.txt /opt/openwisp/requirements.txt
+# RUN pip install -r requirements.txt
+
 FROM BASE
+
+RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
+RUN pip install psycopg2
 
 ARG CONTAINER_PORT=8000
 
-ENV PG_ENGINE django.db.backends.postgresql
+ENV PG_ENGINE django.contrib.gis.db.backends.postgis
 ENV PG_NAME openwisp
 ENV PG_USER admin
 ENV PG_PASS admin
@@ -31,6 +44,8 @@ ENV DJANGO_SECRET_KEY DEFAULT_BAD_KEY
 ENV DJANGO_EMAIL_PORT 1025
 ENV DJANGO_EMAIL_BACKEND django.core.mail.backends.console.EmailBackend
 ENV CONTAINER_PORT ${CONTAINER_PORT}
+ENV MODULE_NAME controller
+
 COPY ./common/ /opt/openwisp/
 COPY ./openwisp_controller/module_settings.py /opt/openwisp/openwisp/module_settings.py
 COPY ./openwisp_controller/urls.py /opt/openwisp/openwisp/urls.py

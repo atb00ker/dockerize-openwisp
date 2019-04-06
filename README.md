@@ -15,6 +15,7 @@ Images are available on docker hub and can be pulled from the following links:
 - OpenWISP Radius - `atb00ker/ready-to-run:openwisp-radius`
 - OpenWISP Controller - `atb00ker/ready-to-run:openwisp-controller`
 - OpenWISP Network Topology - `atb00ker/ready-to-run:openwisp-network-topology`
+- OpenWISP PostgreSQL - `atb00ker/ready-to-run:openwisp-postgresql`
 
 
 ### Kubernetes
@@ -83,8 +84,6 @@ Default username & password are `admin`.
 
 **(`pipenv`)Note:** Remember changing the values in `.env` file does nothing because `.env` is also a special file in `pipenv`, you need to change the values in `.env` file then re-activate environment to ensure that the changes reflect.
 
-**Note:** Currently, `openwisp-controller` is not configured with `postGIS` and will not retain data.
-
 ### Docker Swarm (Using Docker Machine)
 
 1. Install docker: `sudo snap install docker`
@@ -138,8 +137,6 @@ $ docker-machine ssh manger1
 Default username & password are `admin`.
 
 **(`pipenv`)Note:** Remember changing the values in `.env` file does nothing because `.env` is also a special file in `pipenv`, you need to change the values in `.env` file then re-activate environment to ensure that the changes reflect.
-
-**Note:** Currently, `openwisp-controller` is not configured with `postGIS` and will not retain data.
 
 ## Build (Developers)
 

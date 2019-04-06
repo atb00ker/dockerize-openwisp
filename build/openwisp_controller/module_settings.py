@@ -41,13 +41,6 @@ EXTENDED_APPS = [
 
 REDIS_HOST = os.environ['DJANGO_REDIS_HOST']
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.spatialite',
-        'NAME': '/opt/openwisp/db.sqlite3',
-    }
-}
-
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'asgi_redis.RedisChannelLayer',

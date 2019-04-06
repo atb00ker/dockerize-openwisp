@@ -25,6 +25,7 @@ ENV DJANGO_EMAIL_PORT 1025
 ENV DJANGO_CORS_ORIGIN_ALLOW_ALL True
 ENV CONTAINER_PORT ${CONTAINER_PORT}
 ENV DJANGO_EMAIL_BACKEND django.core.mail.backends.console.EmailBackend
+ENV MODULE_NAME dashboard
 
 COPY ./common/ /opt/openwisp/
 COPY ./openwisp_dashboard/module_settings.py /opt/openwisp/openwisp/module_settings.py

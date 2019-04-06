@@ -29,6 +29,7 @@ ENV DJANGO_SECRET_KEY DEFAULT_BAD_KEY
 ENV DJANGO_EMAIL_PORT 1025
 ENV CONTAINER_PORT ${CONTAINER_PORT}
 ENV DJANGO_EMAIL_BACKEND django.core.mail.backends.console.EmailBackend
+ENV MODULE_NAME radius
 
 COPY ./common/ /opt/openwisp/
 COPY ./openwisp_radius/module_settings.py /opt/openwisp/openwisp/module_settings.py
