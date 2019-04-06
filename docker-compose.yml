@@ -35,7 +35,7 @@ services:
       - postgres
       - redis
     volumes:
-      - ${DJANGO_MEDIA_VOLUME_LOCATION}:/opt/openwisp/media
+      - openwisp_media:/opt/openwisp/media
 
   network-topology:
     image: atb00ker/ready-to-run:openwisp-network-topology
@@ -151,3 +151,4 @@ services:
 
 volumes:
   postgres_data: {}
+  openwisp_media: {}
