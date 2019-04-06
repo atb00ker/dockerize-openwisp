@@ -214,7 +214,7 @@ resource "kubernetes_replication_controller" "postgres" {
 
       spec {
         container {
-          image = "postgres:10-alpine"
+          image = "atb00ker/ready-to-run:openwisp-postgresql"
           name  = "postgres"
 
           port {

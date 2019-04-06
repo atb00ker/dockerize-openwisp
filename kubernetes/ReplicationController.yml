@@ -12,7 +12,6 @@ spec:
     spec:
       containers:
       - name: openwisp-controller
-        imagePullPolicy: "Always"
         image: atb00ker/ready-to-run:openwisp-controller
         ports:
           - containerPort: 8000
@@ -38,7 +37,6 @@ spec:
       containers:
       - name: openwisp-network-topology
         image: atb00ker/ready-to-run:openwisp-network-topology
-        imagePullPolicy: "Always"
         ports:
           - containerPort: 8001
         envFrom:
@@ -59,7 +57,6 @@ spec:
       containers:
       - name: openwisp-radius
         image: atb00ker/ready-to-run:openwisp-radius
-        imagePullPolicy: "Always"
         ports:
           - containerPort: 8002
         envFrom:
@@ -80,7 +77,6 @@ spec:
       containers:      
       - name: openwisp-dashboard
         image: atb00ker/ready-to-run:openwisp-dashboard
-        imagePullPolicy: "Always"
         ports:
           - containerPort: 8003
         envFrom:
@@ -101,8 +97,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:10-alpine
-          imagePullPolicy: "IfNotPresent"
+          image: atb00ker/ready-to-run:openwisp-postgresql
           ports:
             - containerPort: 5432
           envFrom:

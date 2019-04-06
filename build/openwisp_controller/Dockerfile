@@ -26,7 +26,7 @@ RUN pip install psycopg2
 ARG CONTAINER_PORT=8000
 
 ENV PG_ENGINE django.contrib.gis.db.backends.postgis
-ENV PG_NAME openwisp
+ENV PG_NAME openwisp_db
 ENV PG_USER admin
 ENV PG_PASS admin
 ENV PG_HOST postgres

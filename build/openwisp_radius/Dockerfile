@@ -14,7 +14,7 @@ FROM BASE
 ARG CONTAINER_PORT=8002
 
 ENV PG_ENGINE django.db.backends.postgresql
-ENV PG_NAME openwisp
+ENV PG_NAME openwisp_radius_db
 ENV PG_USER admin
 ENV PG_PASS admin
 ENV PG_HOST postgres

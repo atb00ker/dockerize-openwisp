@@ -20,7 +20,7 @@ Images are available on docker hub and can be pulled from the following links:
 
 ### Kubernetes
 
-1. (skip if you have a running cluster) Setup Kubernetes Cluster: A guide for setting up the cluster on bare-metal machines is available [here](https://blog.alexellis.io/kubernetes-in-10-minutes/) and the guide to get started with kubernetes-dashboard (Web UI) is available [here](https://github.com/kubernetes/dashboard).
+1. (optional) Setup a Kubernetes Cluster: A guide for setting up the cluster on bare-metal machines is available [here](https://blog.alexellis.io/kubernetes-in-10-minutes/) and the guide to get started with kubernetes-dashboard (Web UI) is available [here](https://github.com/kubernetes/dashboard).
 
 2. Set external IP: You need to set the external IP for all the services. This is the IP on which you will access your openwisp applications. All the services are in [this file](https://github.com/atb00ker/dockerize-openwisp/blob/master/kubernetes/Service.yml). Please do `ctrl+f` to find `192.168.1.6` and replace with your server's external IP in this file. 
 
@@ -29,7 +29,7 @@ Images are available on docker hub and can be pulled from the following links:
 - The ConfigMap with name `common-config` will pass the environment variables to all the openwisp containers.
 - The ConfigMap with name `controller-config` will pass the environment variables to only the openwisp-controller container. If required, new `ConfigMap` can be easily set and added to the service as done [here](https://github.com/atb00ker/dockerize-openwisp/blob/79021ca8ad1d1c083d2822f05143f3c80b0d8077/kubernetes/ReplicationController.yml#L19).
 
-4. Apply to Kubernetes Cluster: You need to apply all the files in the `kubernetes/` directory to your cluster. You can use the Web UI to create new components or you can use `kubectl apply -f <filename>` to apply from CLI. Some `ReplicationControllers` are dependant on other components, so it'll be useful to apply them at last. I recommend to follow this order.
+4. Apply to Kubernetes Cluster: You need to apply all the files in the `kubernetes/` directory to your cluster. You can use the Web UI to create new components or you can use `kubectl apply -f <filename>` to apply from CLI. Some `ReplicationControllers` are dependant on other components, so it'll be useful to apply them at last. I recommend to follow this order:
 ```
 $ kubectl apply -f ConfigMap.yml
 $ kubectl apply -f PresistentVolume.yml
@@ -44,8 +44,8 @@ $ kubectl apply -f Service.yml
 
 The same can be deployed using terraform.
 
-1. [Install terraform](https://learn.hashicorp.com/terraform/getting-started/install.html)
-2. Set the external_ip in `terraform/variables.tf` (Fiddle with other variables if you so desire)
+1. [Install terraform](https://learn.hashicorp.com/terraform/getting-started/install.html).
+2. Set the external_ip in `terraform/variables.tf` (Fiddle with other variables if you so desire but that is optional)
 3. (optional) Configure: `terraform/kubes-configmap.tf` can be used to configure ConfigMaps.
 4. Execute the following commands:
 ```
@@ -62,17 +62,17 @@ Testing on docker-compose is relatively less resource and time consuming.
 
 1. Install docker-compose: `pip install docker-compose`
 2. (optional) Congfigure: Manipulate all the values in the .env file as you desire & run `make_secret_key.py` to generate a new secret key.
-3. Pull all the required images to avoid building them. (which is time consuming task.)
+3. Pull all the required images to avoid building them. (building images is a time consuming task.)
 
 ```bash
 docker pull atb00ker/ready-to-run:openwisp-dashboard
 docker pull atb00ker/ready-to-run:openwisp-radius
 docker pull atb00ker/ready-to-run:openwisp-controller
 docker pull atb00ker/ready-to-run:openwisp-network-topology
+docker pull atb00ker/ready-to-run:openwisp-postgresql
 ```
 
-4. Run containers: (inside root of the repository) `docker-compose up`
-It will take a while for the containers to start up. (~1 minute)
+4. Run containers: Inside root of the repository, run `docker-compose up`. It will take a while for the containers to start up. (~1 minute)
 
 5. When the containers are ready, you can test them out by going to: 
 - openwisp-controller: `127.0.0.1:8000/admin`
@@ -82,7 +82,7 @@ It will take a while for the containers to start up. (~1 minute)
 
 Default username & password are `admin`.
 
-**(`pipenv`)Note:** Remember changing the values in `.env` file does nothing because `.env` is also a special file in `pipenv`, you need to change the values in `.env` file then re-activate environment to ensure that the changes reflect.
+**Note(`pipenv`):** Remember changing the values in `.env` file does nothing because `.env` is also a special file in `pipenv`, you need to change the values in `.env` file then re-activate environment to ensure that the changes reflect.
 
 ### Docker Swarm (Using Docker Machine)
 
@@ -121,8 +121,7 @@ $ exit
 $ docker-machine ssh manger1
 ```
 
-5. Add files: we need `docker-compose.yml` and `.env` inside the manager1 container. We can simply copy data and use editor `vi` inside container to paste the files.
-
+5. Add files: we need `docker-compose.yml` and `.env` inside the `manager1` container. We can simply copy data and use editor `vi` inside container to paste the files.
 6. (optional) Change values in `.env` file as you desire.
 7. Import environment variable: `export $(grep -v '^#' .env | xargs -0)`
 8. Run stack: `docker stack deploy --compose-file docker-compose.yml openwisp`
@@ -136,11 +135,11 @@ $ docker-machine ssh manger1
 
 Default username & password are `admin`.
 
-**(`pipenv`)Note:** Remember changing the values in `.env` file does nothing because `.env` is also a special file in `pipenv`, you need to change the values in `.env` file then re-activate environment to ensure that the changes reflect.
+**Note(`pipenv`):** Remember changing the values in `.env` file does nothing because `.env` is also a special file in `pipenv`, you need to change the values in `.env` file then re-activate environment to ensure that the changes reflect.
 
 ## Build (Developers)
 
-Guide to build images again (with modification or different environment variables).
+Guide to build images again with modification or with different environment variables.
 
 ##### Steps:
 
