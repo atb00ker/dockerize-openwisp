@@ -18,6 +18,6 @@ def database_status():
 
 
 if __name__ == "__main__":
-    print("Waiting for Database to respond...")
+    print("Waiting for Database to become available...")
     database_status()
-    print("Connection with database establised, migrating...")
+    print("Connection with database established.")

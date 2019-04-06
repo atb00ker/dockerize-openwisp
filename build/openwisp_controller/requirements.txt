@@ -4,3 +4,4 @@ openwisp-utils
 asgi_redis 
 service_identity 
 django-redis
+psycopg2

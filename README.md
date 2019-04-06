@@ -17,6 +17,11 @@ Images are available on docker hub and can be pulled from the following links:
 - OpenWISP Network Topology - `atb00ker/ready-to-run:openwisp-network-topology`
 - OpenWISP PostgreSQL - `atb00ker/ready-to-run:openwisp-postgresql`
 
+**Test using:**
+1. [Kubernetes](https://github.com/atb00ker/dockerize-openwisp#kubernetes)
+2. [Terraform](https://github.com/atb00ker/dockerize-openwisp#terraform)
+3. [Docker Compose](https://github.com/atb00ker/dockerize-openwisp#docker-compose)
+4. [Docker Swarm (Using Docker Machine)](https://github.com/atb00ker/dockerize-openwisp#docker-swarm-using-docker-machine)
 
 ### Kubernetes
 

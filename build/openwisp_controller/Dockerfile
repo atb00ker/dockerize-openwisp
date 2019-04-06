@@ -2,26 +2,12 @@ FROM python:3.7-alpine AS BASE
 
 WORKDIR /opt/openwisp
 
-RUN apk add --update --no-cache build-base libffi-dev openssl-dev python3-dev zlib-dev jpeg-dev sqlite bash --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing gdal-dev libspatialite-dev geos-dev
-RUN wget http://download.osgeo.org/geos/geos-3.7.1.tar.bz2 && tar xjf geos-3.7.1.tar.bz2 && cd geos-3.7.1/ && ./configure && make && make install && rm -rf /opt/openwisp/geos-3.7.1.tar.bz2 /opt/openwisp/geos-3.7.1  
+RUN apk add --update --no-cache build-base libffi-dev openssl-dev postgresql-dev python3-dev zlib-dev jpeg-dev musl-dev --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing gdal-dev geos-dev
 
 COPY ./openwisp_controller/requirements.txt /opt/openwisp/requirements.txt
 RUN pip install -r requirements.txt
 
-# NEXT
-# FROM python:3.7-alpine AS BASE
-
-# WORKDIR /opt/openwisp
-
-# RUN apk add --update --no-cache build-base libffi-dev openssl-dev python3-dev zlib-dev jpeg-dev musl-dev --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing gdal-dev geos-dev
-
-# COPY ./openwisp_controller/requirements.txt /opt/openwisp/requirements.txt
-# RUN pip install -r requirements.txt
-
 FROM BASE
-
-RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
-RUN pip install psycopg2
 
 ARG CONTAINER_PORT=8000
 
