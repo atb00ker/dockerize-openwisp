@@ -21,6 +21,7 @@ resource "kubernetes_config_map" "common" {
 
   data {
     DJANGO_SECRET_KEY = "MY_COMPANY_SECRET_KEY"
+    DJANGO_DEBUG      = "True"
   }
 }
 

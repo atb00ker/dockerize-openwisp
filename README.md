@@ -38,8 +38,8 @@ Images are available on docker hub and can be pulled from the following links:
 ```
 $ kubectl apply -f ConfigMap.yml
 $ kubectl apply -f PresistentVolume.yml
-$ kubectl apply -f ReplicationController.yml
 $ kubectl apply -f Service.yml
+$ kubectl apply -f ReplicationController.yml
 ```
 
 5. Wait for a while. Containers will take a little while to boot up (~1 minute). You can see the status on the Web UI or on CLI by `kubectl get pods` command.

@@ -19,7 +19,7 @@ resource "kubernetes_persistent_volume" "postgres-pv-volume" {
 
     persistent_volume_source {
       host_path {
-        path = "/mnt/data"
+        path = "/mnt/psql"
       }
     }
   }

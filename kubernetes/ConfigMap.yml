@@ -16,6 +16,7 @@ metadata:
   name: common-config
 data:
   DJANGO_SECRET_KEY: MY_COMPANY_SECRET_KEY
+  DJANGO_DEBUG: True
 ---
 apiVersion: v1
 kind: ConfigMap
