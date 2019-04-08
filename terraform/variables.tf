@@ -6,13 +6,13 @@ variable "external_ip" {
 # Number of pods to be lauched for openwisp-radius
 variable "radius_instances" {
   type    = "string"
-  default = 4
+  default = 1
 }
 
 # Number of pods to be lauched for openwisp-controller
 variable "controller_instances" {
   type    = "string"
-  default = 3
+  default = 1
 }
 
 # Number of pods to be lauched for openwisp-dashboard
@@ -23,6 +23,11 @@ variable "dashboard_instances" {
 
 # Number of pods to be lauched for openwisp-network-topology
 variable "topology_instances" {
+  type    = "string"
+  default = 1
+}
+# Number of pods to be lauched for openwisp-network-topology
+variable "redis_instances" {
   type    = "string"
   default = 1
 }

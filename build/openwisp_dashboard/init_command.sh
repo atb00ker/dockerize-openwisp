@@ -3,6 +3,6 @@
 
 python services_status.py database redis
 python manage.py collectstatic --noinput
-python manage.py migrate --noinput
+python manage.py migrate --settings=openwisp.migrate_settings --noinput
 python load_init_data.py
 python manage.py runserver 0.0.0.0:${CONTAINER_PORT}

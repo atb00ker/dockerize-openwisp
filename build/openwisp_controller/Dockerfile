@@ -2,7 +2,7 @@ FROM python:3.7-alpine AS BASE
 
 WORKDIR /opt/openwisp
 
-RUN apk add --update --no-cache build-base libffi-dev openssl-dev postgresql-dev python3-dev zlib-dev jpeg-dev musl-dev --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing gdal-dev geos-dev
+RUN apk add --update --no-cache build-base libffi-dev openssl-dev postgresql-dev python3-dev zlib-dev jpeg-dev musl-dev git --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing gdal-dev geos-dev
 
 COPY ./openwisp_controller/requirements.txt /opt/openwisp/requirements.txt
 RUN pip install -r requirements.txt

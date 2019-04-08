@@ -29,29 +29,29 @@ resource "kubernetes_replication_controller" "openwisp-controller" {
           port {
             container_port = 8000
           }
-
-          env_from {
-            config_map_ref {
-              name = "${kubernetes_config_map.common.metadata.0.name}"
-            }
+          volume_mount {
+            name       = "openwisp-postgres-data"
+            mount_path = "/opt/openwisp/media"
           }
-
           env_from {
             config_map_ref {
-              name = "${kubernetes_config_map.controller.metadata.0.name}"
+              name = "${kubernetes_config_map.common-config.metadata.0.name}"
             }
           }
         }
+        volume {
+          name = "openwisp-controller-data"
 
-        container {
-          image = "redis:alpine"
-          name  = "redis"
+          persistent_volume_claim {
+            claim_name = "controller-pv-claim"
+          }
         }
       }
     }
   }
-
-  depends_on = ["kubernetes_replication_controller.openwisp-postgresql"]
+  depends_on = ["kubernetes_persistent_volume.controller-pv-volume", "kubernetes_persistent_volume_claim.controller-pv-claim", 
+  "kubernetes_replication_controller.openwisp-postgresql",
+  "kubernetes_replication_controller.redis"]
 }
 
 resource "kubernetes_replication_controller" "openwisp-radius" {
@@ -88,7 +88,7 @@ resource "kubernetes_replication_controller" "openwisp-radius" {
 
           env_from {
             config_map_ref {
-              name = "${kubernetes_config_map.common.metadata.0.name}"
+              name = "${kubernetes_config_map.common-config.metadata.0.name}"
             }
           }
         }
@@ -133,7 +133,7 @@ resource "kubernetes_replication_controller" "openwisp-network-topology" {
 
           env_from {
             config_map_ref {
-              name = "${kubernetes_config_map.common.metadata.0.name}"
+              name = "${kubernetes_config_map.common-config.metadata.0.name}"
             }
           }
         }
@@ -178,7 +178,7 @@ resource "kubernetes_replication_controller" "openwisp-dashboard" {
 
           env_from {
             config_map_ref {
-              name = "${kubernetes_config_map.common.metadata.0.name}"
+              name = "${kubernetes_config_map.common-config.metadata.0.name}"
             }
           }
         }
@@ -186,7 +186,8 @@ resource "kubernetes_replication_controller" "openwisp-dashboard" {
     }
   }
 
-  depends_on = ["kubernetes_replication_controller.openwisp-postgresql"]
+  depends_on = ["kubernetes_replication_controller.openwisp-postgresql",
+  "kubernetes_replication_controller.redis"]
 }
 
 resource "kubernetes_replication_controller" "redis" {
@@ -199,7 +200,7 @@ resource "kubernetes_replication_controller" "redis" {
   }
 
   spec {
-    replicas = 1
+    replicas = "${var.redis_instances}"
 
     selector {
       App = "redis"

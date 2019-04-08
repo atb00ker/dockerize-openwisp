@@ -19,6 +19,13 @@ spec:
         envFrom:
           - configMapRef:
               name: common-config
+          volumeMounts:
+            - mountPath: /opt/openwisp/media
+              name: openwisp-controller-data
+      volumes:
+        - name: openwisp-controller-data
+          persistentVolumeClaim:
+            claimName: controller-pv-claim
 ---
 apiVersion: v1
 kind: ReplicationController

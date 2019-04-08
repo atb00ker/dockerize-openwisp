@@ -1,7 +1,5 @@
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
-import psycopg2
-import redis
 import os
 import time
 import sys
@@ -45,16 +43,17 @@ def redis_status():
     else:
         return True
 
-    
+
 if __name__ == "__main__":
     arguments = sys.argv[1:]
     # Database Connection
     if "database" in arguments:
+        import psycopg2
         print("Waiting for database to become available...")
         connected = False
         while not connected:
             connected = database_status()
-        print("Connection with database established.")    
+        print("Connection with database established.")
     # OpenWISP Dashboard Connection
     if "dashboard" in arguments:
         print("Waiting for OpenWISP dashboard to become available...")
@@ -64,9 +63,9 @@ if __name__ == "__main__":
         print("Connection with OpenWISP dashboard established.")
     # Redis Connection
     if "redis" in arguments:
+        import redis
         print("Waiting for redis to become available...")
         connected = False
         while not connected:
             connected = redis_status()
         print("Connection with redis established.")
-

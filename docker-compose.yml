@@ -28,7 +28,7 @@ services:
       - OPENWISP_DASHBOARD_HOST=${OPENWISP_DASHBOARD_HOST}
       - OPENWISP_DASHBOARD_PORT=${OPENWISP_DASHBOARD_PORT}
     deploy:
-      replicas: 2
+      replicas: 1
     ports:
       - "8000:8000"
     depends_on:
@@ -103,6 +103,7 @@ services:
       - DJANGO_X509_DEFAULT_CA_VALIDITY=${DJANGO_X509_DEFAULT_CA_VALIDITY}
     depends_on:
       - postgres
+      - redis
     links:
       - postgres
 
@@ -112,7 +113,7 @@ services:
       context: build
       dockerfile: openwisp_radius/Dockerfile
     deploy:
-      replicas: 3
+      replicas: 1
     ports:
       - "8002:8002"
     environment:

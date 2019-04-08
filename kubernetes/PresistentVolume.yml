@@ -9,7 +9,7 @@ metadata:
 spec:
   storageClassName: manual
   capacity:
-    storage: 1Gi
+    storage: 100Mi
   accessModes:
     - ReadWriteMany
   hostPath:
@@ -27,4 +27,34 @@ spec:
     - ReadWriteMany
   resources:
     requests:
-      storage: 1Gi
+      storage: 100Mi
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: controller-pv-volume
+  labels:
+    type: local
+    app: openwisp-controller
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/media"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: controller-pv-claim
+  labels:
+    app: openwisp-controller
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Mi

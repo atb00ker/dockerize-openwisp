@@ -14,7 +14,7 @@ resource "kubernetes_config_map" "openwisp-postgresql" {
   }
 }
 
-resource "kubernetes_config_map" "common" {
+resource "kubernetes_config_map" "common-config" {
   metadata {
     name = "common-config"
   }
@@ -25,15 +25,5 @@ resource "kubernetes_config_map" "common" {
     OPENWISP_DASHBOARD_HOST     = "openwisp-dashboard"
     DJANGO_SECRET_KEY           = "MY_COMPANY_SECRET_KEY"
     DJANGO_DEBUG                = "True"
-  }
-}
-
-resource "kubernetes_config_map" "controller" {
-  metadata {
-    name = "controller-config"
-  }
-
-  data {
-    REDIS_HOST = "localhost"
   }
 }
