@@ -28,9 +28,11 @@ INSTALLED_APPS = [
     'sortedm2m',
     'reversion',
     'leaflet',
+    # rest framework
     'rest_framework',
     'rest_framework_gis',
-    'channels',
+    # channels
+    'channels'
 ]
 
 EXTENDED_APPS = [
@@ -39,7 +41,7 @@ EXTENDED_APPS = [
     'django_loci',
 ]
 
-REDIS_HOST = os.environ['DJANGO_REDIS_HOST']
+REDIS_HOST = os.environ['REDIS_HOST']
 
 CHANNEL_LAYERS = {
     'default': {
@@ -48,7 +50,6 @@ CHANNEL_LAYERS = {
         'ROUTING': 'openwisp_controller.geo.channels.routing.channel_routing',
     },
 }
-# FOR DJANGO REDIS
 
 CACHES = {
     "default": {
@@ -60,10 +61,6 @@ CACHES = {
     }
 }
 
-# Database
-# https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
-# django x509 settings
 DJANGO_X509_DEFAULT_CERT_VALIDITY = os.environ['DJANGO_X509_DEFAULT_CERT_VALIDITY']
 DJANGO_X509_DEFAULT_CA_VALIDITY = os.environ['DJANGO_X509_DEFAULT_CA_VALIDITY']
 
@@ -71,5 +68,3 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 
 FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
-
-SPATIALITE_LIBRARY_PATH = 'mod_spatialite.so'

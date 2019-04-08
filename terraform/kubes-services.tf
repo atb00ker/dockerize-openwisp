@@ -78,23 +78,46 @@ resource "kubernetes_service" "openwisp-dashboard" {
   }
 }
 
-resource "kubernetes_service" "postgres" {
+resource "kubernetes_service" "openwisp-postgresql" {
   metadata {
-    name = "postgres"
+    name = "openwisp-postgresql"
 
     labels {
-      App = "postgres"
+      App = "openwisp-postgresql"
     }
   }
 
   spec {
     selector {
-      App = "${kubernetes_replication_controller.postgres.metadata.0.labels.App}"
+      App = "${kubernetes_replication_controller.openwisp-postgresql.metadata.0.labels.App}"
     }
 
     port {
       port        = 5432
       target_port = 5432
+    }
+
+    type = "NodePort"
+  }
+}
+
+resource "kubernetes_service" "redis" {
+  metadata {
+    name = "redis"
+
+    labels {
+      App = "redis"
+    }
+  }
+
+  spec {
+    selector {
+      App = "${kubernetes_replication_controller.redis.metadata.0.labels.App}"
+    }
+
+    port {
+      port        = 6379
+      target_port = 6379
     }
 
     type = "NodePort"

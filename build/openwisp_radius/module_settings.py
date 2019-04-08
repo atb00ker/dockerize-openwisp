@@ -1,4 +1,3 @@
-import sys
 import os
 
 INSTALLED_APPS = [
@@ -48,10 +47,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-
-# WARNING: for development only!
-AUTH_PASSWORD_VALIDATORS = []
 
 # Swapper model definitions
 DJANGO_FREERADIUS_RADIUSREPLY_MODEL = 'openwisp_radius.RadiusReply'

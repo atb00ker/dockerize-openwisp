@@ -1,16 +1,16 @@
-resource "kubernetes_config_map" "postgres" {
+resource "kubernetes_config_map" "openwisp-postgresql" {
   metadata {
     name = "postgres-config"
 
     labels {
-      App = "postgres"
+      App = "openwisp-postgresql"
     }
   }
 
   data {
-    POSTGRES_MULTIPLE_DATABASES = "openwisp_db,openwisp_radius_db"
-    POSTGRES_USER               = "admin"
-    POSTGRES_PASSWORD           = "admin"
+    POSTGRES_DB       = "openwisp_db"
+    POSTGRES_USER     = "admin"
+    POSTGRES_PASSWORD = "admin"
   }
 }
 
@@ -20,8 +20,11 @@ resource "kubernetes_config_map" "common" {
   }
 
   data {
-    DJANGO_SECRET_KEY = "MY_COMPANY_SECRET_KEY"
-    DJANGO_DEBUG      = "True"
+    PG_HOST                     = "openwisp-postgresql"
+    OPENWISP_DASHBOARD_PROTOCOL = "http"
+    OPENWISP_DASHBOARD_HOST     = "openwisp-dashboard"
+    DJANGO_SECRET_KEY           = "MY_COMPANY_SECRET_KEY"
+    DJANGO_DEBUG                = "True"
   }
 }
 
@@ -31,6 +34,6 @@ resource "kubernetes_config_map" "controller" {
   }
 
   data {
-    DJANGO_REDIS_HOST = "localhost"
+    REDIS_HOST = "localhost"
   }
 }

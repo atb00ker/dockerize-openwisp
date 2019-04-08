@@ -149,8 +149,7 @@ LOGGING = {
             'formatter': 'verbose',
             'filename': os.path.join(BASE_DIR, 'log/error.log'),
             'maxBytes': 5242880.0,
-            'backupCount': 3,
-            'formatter': 'verbose'
+            'backupCount': 3
         },
     },
     'root': {

@@ -5,7 +5,7 @@ metadata:
   name: postgres-pv-volume
   labels:
     type: local
-    app: postgres
+    app: openwisp-postgresql
 spec:
   storageClassName: manual
   capacity:
@@ -20,7 +20,7 @@ apiVersion: v1
 metadata:
   name: postgres-pv-claim
   labels:
-    app: postgres
+    app: openwisp-postgresql
 spec:
   storageClassName: manual
   accessModes:

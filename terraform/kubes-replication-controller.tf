@@ -51,7 +51,7 @@ resource "kubernetes_replication_controller" "openwisp-controller" {
     }
   }
 
-  depends_on = ["kubernetes_replication_controller.postgres"]
+  depends_on = ["kubernetes_replication_controller.openwisp-postgresql"]
 }
 
 resource "kubernetes_replication_controller" "openwisp-radius" {
@@ -96,7 +96,7 @@ resource "kubernetes_replication_controller" "openwisp-radius" {
     }
   }
 
-  depends_on = ["kubernetes_replication_controller.postgres"]
+  depends_on = ["kubernetes_replication_controller.openwisp-postgresql"]
 }
 
 resource "kubernetes_replication_controller" "openwisp-network-topology" {
@@ -141,7 +141,7 @@ resource "kubernetes_replication_controller" "openwisp-network-topology" {
     }
   }
 
-  depends_on = ["kubernetes_replication_controller.postgres"]
+  depends_on = ["kubernetes_replication_controller.openwisp-postgresql"]
 }
 
 resource "kubernetes_replication_controller" "openwisp-dashboard" {
@@ -186,15 +186,15 @@ resource "kubernetes_replication_controller" "openwisp-dashboard" {
     }
   }
 
-  depends_on = ["kubernetes_replication_controller.postgres"]
+  depends_on = ["kubernetes_replication_controller.openwisp-postgresql"]
 }
 
-resource "kubernetes_replication_controller" "postgres" {
+resource "kubernetes_replication_controller" "redis" {
   metadata {
-    name = "postgres"
+    name = "redis"
 
     labels {
-      App = "postgres"
+      App = "redis"
     }
   }
 
@@ -202,13 +202,50 @@ resource "kubernetes_replication_controller" "postgres" {
     replicas = 1
 
     selector {
-      App = "postgres"
+      App = "redis"
     }
 
     template {
       metadata {
         labels {
-          App = "postgres"
+          App = "redis"
+        }
+      }
+
+      spec {
+        container {
+          image = "redis:alpine"
+          name  = "redis"
+
+          port {
+            container_port = 6379
+          }
+        }
+      }
+    }
+  }
+}
+
+resource "kubernetes_replication_controller" "openwisp-postgresql" {
+  metadata {
+    name = "openwisp-postgresql"
+
+    labels {
+      App = "openwisp-postgresql"
+    }
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      App = "openwisp-postgresql"
+    }
+
+    template {
+      metadata {
+        labels {
+          App = "openwisp-postgresql"
         }
       }
 
@@ -222,19 +259,19 @@ resource "kubernetes_replication_controller" "postgres" {
           }
 
           volume_mount {
-            name       = "postgredb"
+            name       = "openwisp-postgres-data"
             mount_path = "/var/lib/postgresql/data"
           }
 
           env_from {
             config_map_ref {
-              name = "${kubernetes_config_map.postgres.metadata.0.name}"
+              name = "${kubernetes_config_map.openwisp-postgresql.metadata.0.name}"
             }
           }
         }
 
         volume {
-          name = "postgredb"
+          name = "openwisp-postgres-data"
 
           persistent_volume_claim {
             claim_name = "postgres-pv-claim"

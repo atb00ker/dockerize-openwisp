@@ -8,13 +8,12 @@ RUN pip install https://github.com/openwisp/openwisp-users/tarball/master
 RUN pip install -e git+git://github.com/openwisp/openwisp-radius#egg=openwisp_radius
 RUN pip install -e git+git://github.com/openwisp/openwisp-utils#egg=openwisp_utils
 
-
 FROM BASE
 
 ARG CONTAINER_PORT=8002
 
 ENV PG_ENGINE django.db.backends.postgresql
-ENV PG_NAME openwisp_radius_db
+ENV PG_NAME openwisp_db
 ENV PG_USER admin
 ENV PG_PASS admin
 ENV PG_HOST postgres
@@ -29,6 +28,9 @@ ENV DJANGO_SECRET_KEY DEFAULT_BAD_KEY
 ENV DJANGO_EMAIL_PORT 1025
 ENV CONTAINER_PORT ${CONTAINER_PORT}
 ENV DJANGO_EMAIL_BACKEND django.core.mail.backends.console.EmailBackend
+ENV OPENWISP_DASHBOARD_PROTOCOL http
+ENV OPENWISP_DASHBOARD_HOST dashboard
+ENV OPENWISP_DASHBOARD_PORT 8003
 ENV MODULE_NAME radius
 
 COPY ./common/ /opt/openwisp/

@@ -12,7 +12,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    # openwisp2 modules
+    # openwisp modules
     'openwisp_users',
     'openwisp_network_topology',
     # admin

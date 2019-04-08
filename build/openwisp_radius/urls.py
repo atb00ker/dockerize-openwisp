@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('openwisp_users.accounts.urls')),
     url(r'^$', redirect_view, name='index')
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
 
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += staticfiles_urlpatterns()

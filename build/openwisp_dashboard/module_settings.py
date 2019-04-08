@@ -1,4 +1,8 @@
 import os
+from openwisp.controller_settings import *
+from openwisp.radius_settings import *
+from openwisp.topology_settings import *
+
 
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -6,18 +10,49 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
+    # openwisp admin theme
+    # (must be loaded here)
     'openwisp_utils.admin_theme',
-    'django.contrib.admin',
+    # all-auth
     'django.contrib.sites',
-    'django_extensions',
-    'openwisp_users.accounts',  # only needed in test env
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'openwisp_users'
+    # openwisp modules
+    'openwisp_users',
+    # openwisp-controller
+    'openwisp_controller.pki',
+    'openwisp_controller.config',
+    'openwisp_controller.geo',
+    # openwisp-network-topology
+    'openwisp_network_topology',
+    # admin
+    'django.contrib.admin',
+    'django.forms',
+    # other dependencies
+    'sortedm2m',
+    'reversion',
+    'leaflet',
+    # rest framework
+    'rest_framework',
+    'rest_framework_gis',
+    'django_filters',
+    # channels
+    'channels',
+    # registration
+    'rest_framework.authtoken',
+    'rest_auth',
+    'rest_auth.registration',
+    # social login
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.google',
+    # openwisp-radius
+    'openwisp_radius',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = bool(os.environ['DJANGO_CORS_ORIGIN_ALLOW_ALL'])
+CORS_ORIGIN_ALLOW_ALL = bool(
+    os.environ['DJANGO_DASHBOARD_CORS_ORIGIN_ALLOW_ALL'])
 
 OPENWISP_ORGANIZATON_USER_ADMIN = True
 OPENWISP_ORGANIZATON_OWNER_ADMIN = True

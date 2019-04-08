@@ -3,7 +3,7 @@ resource "kubernetes_persistent_volume" "postgres-pv-volume" {
     name = "postgres-pv-volume"
 
     labels {
-      App  = "postgres"
+      App  = "openwisp-postgresql"
       type = "local"
     }
   }
@@ -30,7 +30,7 @@ resource "kubernetes_persistent_volume_claim" "postgres-pv-claim" {
     name = "postgres-pv-claim"
 
     labels {
-      App = "postgres"
+      App = "openwisp-postgresql"
     }
   }
 

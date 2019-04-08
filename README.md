@@ -15,7 +15,6 @@ Images are available on docker hub and can be pulled from the following links:
 - OpenWISP Radius - `atb00ker/ready-to-run:openwisp-radius`
 - OpenWISP Controller - `atb00ker/ready-to-run:openwisp-controller`
 - OpenWISP Network Topology - `atb00ker/ready-to-run:openwisp-network-topology`
-- OpenWISP PostgreSQL - `atb00ker/ready-to-run:openwisp-postgresql`
 
 **Test using:**
 1. [Kubernetes](https://github.com/atb00ker/dockerize-openwisp#kubernetes)
@@ -74,7 +73,6 @@ docker pull atb00ker/ready-to-run:openwisp-dashboard
 docker pull atb00ker/ready-to-run:openwisp-radius
 docker pull atb00ker/ready-to-run:openwisp-controller
 docker pull atb00ker/ready-to-run:openwisp-network-topology
-docker pull atb00ker/ready-to-run:openwisp-postgresql
 ```
 
 4. Run containers: Inside root of the repository, run `docker-compose up`. It will take a while for the containers to start up. (~1 minute)
