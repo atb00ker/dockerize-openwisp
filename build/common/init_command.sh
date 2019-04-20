@@ -1,9 +1,18 @@
 #!/bin/sh
-# Container init commands for all containers 
-# except openwisp-dashboard `init_command.sh` 
-# for dashboard is in openwisp-dashboard/ directory
+# Container init script
 
-python services_status.py database
+
+if [ "$MODULE_NAME" = 'dashboard' ];
+then 
+    python services_status.py database redis
+    python manage.py migrate --settings=openwisp.migrate_settings --noinput
+    python load_init_data.py
+else 
+    python services_status.py database dashboard
+fi
 python manage.py collectstatic --noinput
-python services_status.py dashboard
-python manage.py runserver 0.0.0.0:${CONTAINER_PORT}
+# python manage.py runserver 0.0.0.0:${CONTAINER_PORT}
+
+envsubst < uwsgi.conf.ini > uwsgi.ini
+cat uwsgi.ini
+uwsgi --ini uwsgi.ini

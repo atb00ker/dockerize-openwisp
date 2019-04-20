@@ -68,12 +68,12 @@ WSGI_APPLICATION = 'openwisp.wsgi.application'
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 DATABASES = {
     'default': {
-        'ENGINE': os.environ['PG_ENGINE'],
-        'NAME': os.environ['PG_NAME'],
-        'USER': os.environ['PG_USER'],
-        'PASSWORD': os.environ['PG_PASS'],
-        'HOST': os.environ['PG_HOST'],
-        'PORT': os.environ['PG_PORT']
+        'ENGINE': os.environ['DB_ENGINE'],
+        'NAME': os.environ['DB_NAME'],
+        'USER': os.environ['DB_USER'],
+        'PASSWORD': os.environ['DB_PASS'],
+        'HOST': os.environ['DB_HOST'],
+        'PORT': os.environ['DB_PORT']
     },
 }
 

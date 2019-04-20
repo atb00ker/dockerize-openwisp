@@ -1,7 +1,7 @@
 FROM python:3.7-alpine AS BASE
 
 WORKDIR /opt/openwisp
-RUN apk add --update --no-cache build-base libffi-dev openssl-dev postgresql-dev python3-dev zlib-dev jpeg-dev musl-dev git --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing gdal-dev geos-dev
+RUN apk add --update --no-cache build-base libffi-dev openssl-dev postgresql-dev python3-dev zlib-dev jpeg-dev musl-dev gettext linux-headers git --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing gdal-dev geos-dev
 
 COPY ./openwisp_dashboard/requirements.txt /opt/openwisp/requirements.txt
 RUN pip install -r requirements.txt
@@ -10,12 +10,12 @@ FROM BASE
 
 ARG CONTAINER_PORT=8003
 
-ENV PG_ENGINE django.contrib.gis.db.backends.postgis
-ENV PG_NAME openwisp_db
-ENV PG_USER admin
-ENV PG_PASS admin
-ENV PG_HOST postgres
-ENV PG_PORT 5432
+ENV DB_ENGINE django.contrib.gis.db.backends.postgis
+ENV DB_NAME openwisp_db
+ENV DB_USER admin
+ENV DB_PASS admin
+ENV DB_HOST postgres
+ENV DB_PORT 5432
 ENV DJANGO_LANGUAGE_CODE=en-gb
 ENV DJANGO_TIME_ZONE UTC
 ENV DJANGO_MEDIA_VOLUME_LOCATION ./media
@@ -40,7 +40,6 @@ COPY ./openwisp_radius/module_settings.py /opt/openwisp/openwisp/radius_settings
 COPY ./openwisp_network_topology/module_settings.py /opt/openwisp/openwisp/topology_settings.py
 # OpenWISP Dashboard
 COPY ./openwisp_dashboard/load_init_data.py /opt/openwisp/load_init_data.py
-COPY ./openwisp_dashboard/init_command.sh /opt/openwisp/init_command.sh
 COPY ./openwisp_dashboard/urls.py /opt/openwisp/openwisp/urls.py
 COPY ./openwisp_dashboard/migrate_settings.py /opt/openwisp/openwisp/migrate_settings.py
 

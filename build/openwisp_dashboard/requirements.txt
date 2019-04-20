@@ -10,3 +10,4 @@ https://github.com/openwisp/django-freeradius/tarball/master
 -e git+git://github.com/openwisp/openwisp-radius#egg=openwisp_radius
 -e git+git://github.com/openwisp/openwisp-users#egg=openwisp_users
 -e git+git://github.com/openwisp/openwisp-utils#egg=openwisp_utils
+uwsgi

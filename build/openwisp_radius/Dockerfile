@@ -1,23 +1,23 @@
 FROM python:3.7-alpine AS BASE
 
 WORKDIR /opt/openwisp
-RUN apk add  --update --no-cache build-base postgresql-dev libffi-dev openssl-dev python3-dev zlib-dev jpeg-dev git
-RUN pip install psycopg2
+RUN apk add  --update --no-cache build-base postgresql-dev libffi-dev openssl-dev python3-dev zlib-dev jpeg-dev git gettext linux-headers
 RUN pip install https://github.com/openwisp/django-freeradius/tarball/master
 RUN pip install https://github.com/openwisp/openwisp-users/tarball/master
 RUN pip install -e git+git://github.com/openwisp/openwisp-radius#egg=openwisp_radius
 RUN pip install -e git+git://github.com/openwisp/openwisp-utils#egg=openwisp_utils
+RUN pip install psycopg2 uwsgi
 
 FROM BASE
 
 ARG CONTAINER_PORT=8002
 
-ENV PG_ENGINE django.db.backends.postgresql
-ENV PG_NAME openwisp_db
-ENV PG_USER admin
-ENV PG_PASS admin
-ENV PG_HOST postgres
-ENV PG_PORT 5432
+ENV DB_ENGINE django.db.backends.postgresql
+ENV DB_NAME openwisp_db
+ENV DB_USER admin
+ENV DB_PASS admin
+ENV DB_HOST postgres
+ENV DB_PORT 5432
 ENV DJANGO_LANGUAGE_CODE=en-gb
 ENV DJANGO_TIME_ZONE UTC
 ENV DJANGO_MEDIA_VOLUME_LOCATION ./media

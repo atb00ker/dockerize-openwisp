@@ -19,5 +19,5 @@ data:
   DJANGO_DEBUG: "True"
   OPENWISP_DASHBOARD_PROTOCOL: http
   OPENWISP_DASHBOARD_HOST: openwisp-dashboard
-  PG_HOST: openwisp-postgresql
+  DB_HOST: openwisp-postgresql
   REDIS_HOST: redis

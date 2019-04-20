@@ -9,12 +9,12 @@ services:
     environment: 
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
       - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
-      - PG_ENGINE=${GIS_PG_ENGINE}
-      - PG_NAME=${PG_NAME}
-      - PG_USER=${PG_USER}
-      - PG_PASS=${PG_PASS}
-      - PG_HOST=${PG_HOST}
-      - PG_PORT=${PG_PORT}
+      - DB_ENGINE=${DB_GIS_ENGINE}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
       - DJANGO_LANGUAGE_CODE=${DJANGO_LANGUAGE_CODE}
       - DJANGO_TIME_ZONE=${DJANGO_TIME_ZONE}
       - REDIS_HOST=${REDIS_HOST}
@@ -29,16 +29,13 @@ services:
       - OPENWISP_DASHBOARD_PORT=${OPENWISP_DASHBOARD_PORT}
     deploy:
       replicas: 1
-    ports:
-      - "8000:8000"
     depends_on:
-      - postgres
-      - redis
-    links:
       - postgres
       - redis
     volumes:
       - openwisp_media:/opt/openwisp/media
+    ports:
+      - "8000:8000"
 
   network-topology:
     image: atb00ker/ready-to-run:openwisp-network-topology
@@ -52,12 +49,12 @@ services:
     environment:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
       - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
-      - PG_ENGINE=${PG_ENGINE}
-      - PG_NAME=${PG_NAME}
-      - PG_USER=${PG_USER}
-      - PG_PASS=${PG_PASS}
-      - PG_HOST=${PG_HOST}
-      - PG_PORT=${PG_PORT}
+      - DB_ENGINE=${DB_ENGINE}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
       - DJANGO_LANGUAGE_CODE=${DJANGO_LANGUAGE_CODE}
       - DJANGO_TIME_ZONE=${DJANGO_TIME_ZONE}
       - REDIS_HOST=${REDIS_HOST}
@@ -70,8 +67,6 @@ services:
       - OPENWISP_DASHBOARD_PORT=${OPENWISP_DASHBOARD_PORT}
     depends_on:
       - postgres
-    links:
-      - postgres
 
   dashboard:
     image: atb00ker/ready-to-run:openwisp-dashboard
@@ -80,17 +75,15 @@ services:
       dockerfile: openwisp_dashboard/Dockerfile
     deploy:
       replicas: 1
-    ports:
-      - "8003:8003"
     environment:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
       - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
-      - PG_ENGINE=${GIS_PG_ENGINE}
-      - PG_NAME=${PG_NAME}
-      - PG_USER=${PG_USER}
-      - PG_PASS=${PG_PASS}
-      - PG_HOST=${PG_HOST}
-      - PG_PORT=${PG_PORT}
+      - DB_ENGINE=${DB_GIS_ENGINE}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
       - DJANGO_LANGUAGE_CODE=${DJANGO_LANGUAGE_CODE}
       - DJANGO_TIME_ZONE=${DJANGO_TIME_ZONE}
       - REDIS_HOST=${REDIS_HOST}
@@ -104,8 +97,8 @@ services:
     depends_on:
       - postgres
       - redis
-    links:
-      - postgres
+    ports:
+      - "8003:8003"
 
   radius:
     image: atb00ker/ready-to-run:openwisp-radius
@@ -114,17 +107,17 @@ services:
       dockerfile: openwisp_radius/Dockerfile
     deploy:
       replicas: 1
-    ports:
-      - "8002:8002"
+    depends_on:
+      - postgres
     environment:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
       - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
-      - PG_ENGINE=${PG_ENGINE}
-      - PG_NAME=${PG_NAME}
-      - PG_USER=${PG_USER}
-      - PG_PASS=${PG_PASS}
-      - PG_HOST=${PG_HOST}
-      - PG_PORT=${PG_PORT}
+      - DB_ENGINE=${DB_ENGINE}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
       - DJANGO_LANGUAGE_CODE=${DJANGO_LANGUAGE_CODE}
       - DJANGO_TIME_ZONE=${DJANGO_TIME_ZONE}
       - DJANGO_DEBUG=${DJANGO_DEBUG}
@@ -134,10 +127,8 @@ services:
       - OPENWISP_DASHBOARD_PROTOCOL=${OPENWISP_DASHBOARD_PROTOCOL}
       - OPENWISP_DASHBOARD_HOST=${OPENWISP_DASHBOARD_HOST}
       - OPENWISP_DASHBOARD_PORT=${OPENWISP_DASHBOARD_PORT}
-    depends_on:
-      - postgres
-    links:
-      - postgres
+    ports:
+      - "8002:8002"
 
   redis:
     image: redis:alpine
@@ -148,14 +139,25 @@ services:
 
   postgres:
     image: mdillon/postgis:10-alpine
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=${PG_NAME}
-      - POSTGRES_USER=${PG_USER}
-      - POSTGRES_PASSWORD=${PG_PASS}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+    ports:
+      - "5432:5432"
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./build/nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf:ro
+    command: [nginx-debug, '-g', 'daemon off;']
+    ports:
+      - 8080:8080
+      - 8081:8081
+      - 8082:8082
+      - 8083:8083
 
 volumes:
   postgres_data: {}

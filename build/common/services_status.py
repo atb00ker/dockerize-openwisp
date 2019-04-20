@@ -8,11 +8,11 @@ import sys
 def database_status():
     try:
         psycopg2.connect(
-            dbname=os.environ['PG_NAME'],
-            user=os.environ['PG_USER'],
-            password=os.environ['PG_PASS'],
-            host=os.environ['PG_HOST'],
-            port=os.environ['PG_PORT'],
+            dbname=os.environ['DB_NAME'],
+            user=os.environ['DB_USER'],
+            password=os.environ['DB_PASS'],
+            host=os.environ['DB_HOST'],
+            port=os.environ['DB_PORT'],
         )
     except psycopg2.OperationalError:
         time.sleep(3)

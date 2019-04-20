@@ -2,7 +2,7 @@ FROM python:3.7-alpine AS BASE
 
 WORKDIR /opt/openwisp
 
-RUN apk add --update --no-cache build-base libffi-dev openssl-dev postgresql-dev python3-dev zlib-dev jpeg-dev musl-dev git --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing gdal-dev geos-dev
+RUN apk add --update --no-cache build-base libffi-dev openssl-dev postgresql-dev gettext linux-headers python3-dev zlib-dev jpeg-dev musl-dev git --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing gdal-dev geos-dev 
 
 COPY ./openwisp_controller/requirements.txt /opt/openwisp/requirements.txt
 RUN pip install -r requirements.txt
@@ -11,12 +11,12 @@ FROM BASE
 
 ARG CONTAINER_PORT=8000
 
-ENV PG_ENGINE django.contrib.gis.db.backends.postgis
-ENV PG_NAME openwisp_db
-ENV PG_USER admin
-ENV PG_PASS admin
-ENV PG_HOST postgres
-ENV PG_PORT 5432
+ENV DB_ENGINE django.contrib.gis.db.backends.postgis
+ENV DB_NAME openwisp_db
+ENV DB_USER admin
+ENV DB_PASS admin
+ENV DB_HOST postgres
+ENV DB_PORT 5432
 ENV DJANGO_LANGUAGE_CODE=en-gb
 ENV DJANGO_TIME_ZONE UTC
 ENV DJANGO_MEDIA_VOLUME_LOCATION ./media

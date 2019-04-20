@@ -7,3 +7,4 @@ https://github.com/openwisp/django-netjsonconfig/tarball/master
 https://github.com/openwisp/django-x509/tarball/master
 -e git+git://github.com/openwisp/openwisp-users#egg=openwisp_users
 -e git+git://github.com/openwisp/openwisp-utils#egg=openwisp_utils
+uwsgi
