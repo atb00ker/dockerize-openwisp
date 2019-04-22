@@ -1,6 +1,5 @@
 #!/bin/sh
-# Container init script
-
+# OpenWISP common module init script
 
 if [ "$MODULE_NAME" = 'dashboard' ];
 then 
@@ -14,5 +13,4 @@ python manage.py collectstatic --noinput
 # python manage.py runserver 0.0.0.0:${CONTAINER_PORT}
 
 envsubst < uwsgi.conf.ini > uwsgi.ini
-cat uwsgi.ini
 uwsgi --ini uwsgi.ini

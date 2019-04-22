@@ -100,6 +100,40 @@ resource "kubernetes_service" "openwisp-postgresql" {
     type = "NodePort"
   }
 }
+resource "kubernetes_service" "openwisp-nginx" {
+  metadata {
+    name = "openwisp-nginx"
+
+    labels {
+      App = "openwisp-nginx"
+    }
+  }
+
+  spec {
+    selector {
+      App = "${kubernetes_replication_controller.openwisp-nginx.metadata.0.labels.App}"
+    }
+
+    port {
+      name = "openwisp-dashboard"
+      port = 8080
+    }
+    port {
+      name = "openwisp-controller"
+      port = 8081
+    }
+    port {
+      name = "openwisp-radius"
+      port = 8082
+    }
+    port {
+      name = "openwisp-topology"
+      port = 8083
+    }
+
+    type = "NodePort"
+  }
+}
 
 resource "kubernetes_service" "redis" {
   metadata {

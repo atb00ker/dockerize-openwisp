@@ -8,8 +8,6 @@ RUN pip install -r requirements.txt
 
 FROM BASE
 
-ARG CONTAINER_PORT=8003
-
 ENV DB_ENGINE django.contrib.gis.db.backends.postgis
 ENV DB_NAME openwisp_db
 ENV DB_USER admin
@@ -25,7 +23,7 @@ ENV DJANGO_DEFAULT_FROM_EMAIL example@email.com
 ENV DJANGO_SECRET_KEY DEFAULT_BAD_KEY
 ENV DJANGO_EMAIL_PORT 1025
 ENV DJANGO_DASHBOARD_CORS_ORIGIN_ALLOW_ALL True
-ENV CONTAINER_PORT ${CONTAINER_PORT}
+ENV CONTAINER_PORT 8000
 ENV DJANGO_EMAIL_BACKEND django.core.mail.backends.console.EmailBackend
 ENV REDIS_HOST redis
 ENV DJANGO_X509_DEFAULT_CERT_VALIDITY 1825
@@ -37,7 +35,7 @@ COPY ./common/ /opt/openwisp/
 COPY ./openwisp_dashboard/module_settings.py /opt/openwisp/openwisp/module_settings.py
 COPY ./openwisp_controller/module_settings.py /opt/openwisp/openwisp/controller_settings.py
 COPY ./openwisp_radius/module_settings.py /opt/openwisp/openwisp/radius_settings.py
-COPY ./openwisp_network_topology/module_settings.py /opt/openwisp/openwisp/topology_settings.py
+COPY ./openwisp_topology/module_settings.py /opt/openwisp/openwisp/topology_settings.py
 # OpenWISP Dashboard
 COPY ./openwisp_dashboard/load_init_data.py /opt/openwisp/load_init_data.py
 COPY ./openwisp_dashboard/urls.py /opt/openwisp/openwisp/urls.py

@@ -284,3 +284,52 @@ resource "kubernetes_replication_controller" "openwisp-postgresql" {
 
   depends_on = ["kubernetes_persistent_volume.postgres-pv-volume", "kubernetes_persistent_volume_claim.postgres-pv-claim"]
 }
+resource "kubernetes_replication_controller" "openwisp-nginx" {
+  metadata {
+    name = "openwisp-nginx"
+
+    labels {
+      App = "openwisp-nginx"
+    }
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      App = "openwisp-nginx"
+    }
+
+    template {
+      metadata {
+        labels {
+          App = "openwisp-nginx"
+        }
+      }
+
+      spec {
+        container {
+          image = "atb00ker/ready-to-run:openwisp-nginx"
+          name  = "openwisp-nginx"
+
+          port {
+            name = "openwisp-dashboard"
+            container_port = 8080
+          }
+          port {
+            name = "openwisp-controller"
+            container_port = 8081
+          }
+          port {
+            name = "openwisp-radius"
+            container_port = 8082
+          }
+          port {
+            name = "openwisp-topology"
+            container_port = 8083
+          }
+        }
+      }
+    }
+  }
+}

@@ -87,3 +87,23 @@ spec:
    - port: 6379
   selector:
    app: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openwisp-nginx
+  labels:
+    app: openwisp-nginx
+spec:
+  type: NodePort
+  ports:
+    - name: openwisp-dashboard
+      port: 8080
+    - name: openwisp-controller
+      port: 8081
+    - name: openwisp-radius
+      port: 8082
+    - name: openwisp-topology
+      port: 8083
+  selector:
+   app: openwisp-nginx

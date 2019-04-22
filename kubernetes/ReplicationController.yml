@@ -111,6 +111,31 @@ spec:
 apiVersion: v1
 kind: ReplicationController
 metadata:
+  name: openwisp-nginx
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openwisp-nginx
+    spec:
+      containers:
+      - name: openwisp-nginx
+        image: atb00ker/ready-to-run:openwisp-nginx
+        imagePullPolicy: "Always"
+        ports:
+          - name: openwisp-dashboard
+            containerPort: 8080
+          - name: openwisp-controller
+            containerPort: 8081
+          - name: openwisp-radius
+            containerPort: 8082
+          - name: openwisp-topology
+            containerPort: 8083
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
   name: openwisp-postgresql
 spec:
   replicas: 1

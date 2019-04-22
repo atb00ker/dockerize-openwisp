@@ -26,7 +26,7 @@ services:
       - DJANGO_EMAIL_BACKEND=${DJANGO_EMAIL_BACKEND}
       - OPENWISP_DASHBOARD_PROTOCOL=${OPENWISP_DASHBOARD_PROTOCOL}
       - OPENWISP_DASHBOARD_HOST=${OPENWISP_DASHBOARD_HOST}
-      - OPENWISP_DASHBOARD_PORT=${OPENWISP_DASHBOARD_PORT}
+      - OPENWISP_DASHBOARD_LISTEN_PORT=${OPENWISP_DASHBOARD_LISTEN_PORT}
     deploy:
       replicas: 1
     depends_on:
@@ -34,18 +34,14 @@ services:
       - redis
     volumes:
       - openwisp_media:/opt/openwisp/media
-    ports:
-      - "8000:8000"
 
-  network-topology:
-    image: atb00ker/ready-to-run:openwisp-network-topology
+  topology:
+    image: atb00ker/ready-to-run:openwisp-topology
     build: 
       context: build
-      dockerfile: openwisp_network_topology/Dockerfile
+      dockerfile: openwisp_topology/Dockerfile
     deploy:
       replicas: 1
-    ports:
-      - "8001:8001"
     environment:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
       - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
@@ -64,7 +60,8 @@ services:
       - DJANGO_EMAIL_BACKEND=${DJANGO_EMAIL_BACKEND}
       - OPENWISP_DASHBOARD_PROTOCOL=${OPENWISP_DASHBOARD_PROTOCOL}
       - OPENWISP_DASHBOARD_HOST=${OPENWISP_DASHBOARD_HOST}
-      - OPENWISP_DASHBOARD_PORT=${OPENWISP_DASHBOARD_PORT}
+      - OPENWISP_DASHBOARD_LISTEN_PORT=${OPENWISP_DASHBOARD_LISTEN_PORT}
+      - CONTAINER_PORT=${TOPOLOGY_APP_PORT}
     depends_on:
       - postgres
 
@@ -97,8 +94,6 @@ services:
     depends_on:
       - postgres
       - redis
-    ports:
-      - "8003:8003"
 
   radius:
     image: atb00ker/ready-to-run:openwisp-radius
@@ -126,9 +121,8 @@ services:
       - DJANGO_EMAIL_BACKEND=${DJANGO_EMAIL_BACKEND}
       - OPENWISP_DASHBOARD_PROTOCOL=${OPENWISP_DASHBOARD_PROTOCOL}
       - OPENWISP_DASHBOARD_HOST=${OPENWISP_DASHBOARD_HOST}
-      - OPENWISP_DASHBOARD_PORT=${OPENWISP_DASHBOARD_PORT}
-    ports:
-      - "8002:8002"
+      - OPENWISP_DASHBOARD_LISTEN_PORT=${OPENWISP_DASHBOARD_LISTEN_PORT}
+      - CONTAINER_PORT=${RADIUS_APP_PORT}
 
   redis:
     image: redis:alpine
@@ -139,6 +133,8 @@ services:
 
   postgres:
     image: mdillon/postgis:10-alpine
+    deploy:
+      replicas: 1
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
@@ -149,15 +145,26 @@ services:
       - "5432:5432"
 
   nginx:
-    image: nginx:alpine
-    volumes:
-      - ./build/nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf:ro
-    command: [nginx-debug, '-g', 'daemon off;']
+    image: atb00ker/ready-to-run:openwisp-nginx
+    build: 
+      context: build
+      dockerfile: nginx/Dockerfile
+    deploy:
+      replicas: 1
+    environment:
+      - DASHBOARD_APP_PORT=${DASHBOARD_APP_PORT}
+      - CONTROLLER_APP_PORT=${CONTROLLER_APP_PORT}
+      - RADIUS_APP_PORT=${RADIUS_APP_PORT}
+      - TOPOLOGY_APP_PORT=${TOPOLOGY_APP_PORT}
+      - OPENWISP_DASHBOARD_LISTEN_PORT=${OPENWISP_DASHBOARD_LISTEN_PORT}
+      - OPENWISP_CONTROLLER_LISTEN_PORT=${OPENWISP_CONTROLLER_LISTEN_PORT}
+      - OPENWISP_RADIUS_LISTEN_PORT=${OPENWISP_RADIUS_LISTEN_PORT}
+      - OPENWISP_TOPOLOGY_LISTEN_PORT=${OPENWISP_TOPOLOGY_LISTEN_PORT}
     ports:
-      - 8080:8080
-      - 8081:8081
-      - 8082:8082
-      - 8083:8083
+      - "8080:8080"
+      - "8081:8081"
+      - "8082:8082"
+      - "8083:8083"
 
 volumes:
   postgres_data: {}

@@ -23,7 +23,7 @@ def database_status():
 
 def dashboard_status():
     req = Request(os.environ['OPENWISP_DASHBOARD_PROTOCOL'] + "://" + os.environ['OPENWISP_DASHBOARD_HOST'] +
-                  ":" + os.environ['OPENWISP_DASHBOARD_PORT'])
+                  ":" + os.environ['OPENWISP_DASHBOARD_LISTEN_PORT'])
     try:
         _ = urlopen(req)
     except (URLError, HTTPError):

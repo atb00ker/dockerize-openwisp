@@ -14,7 +14,7 @@ Images are available on docker hub and can be pulled from the following links:
 - OpenWISP Dashboard - `atb00ker/ready-to-run:openwisp-dashboard`
 - OpenWISP Radius - `atb00ker/ready-to-run:openwisp-radius`
 - OpenWISP Controller - `atb00ker/ready-to-run:openwisp-controller`
-- OpenWISP Network Topology - `atb00ker/ready-to-run:openwisp-network-topology`
+- OpenWISP Network Topology - `atb00ker/ready-to-run:openwisp-topology`
 
 **Test using:**
 1. [Kubernetes](https://github.com/atb00ker/dockerize-openwisp#kubernetes)
@@ -72,14 +72,14 @@ Testing on docker-compose is relatively less resource and time consuming.
 docker pull atb00ker/ready-to-run:openwisp-dashboard
 docker pull atb00ker/ready-to-run:openwisp-radius
 docker pull atb00ker/ready-to-run:openwisp-controller
-docker pull atb00ker/ready-to-run:openwisp-network-topology
+docker pull atb00ker/ready-to-run:openwisp-topology
 ```
 
 4. Run containers: Inside root of the repository, run `docker-compose up`. It will take a while for the containers to start up. (~1 minute)
 
 5. When the containers are ready, you can test them out by going to: 
 - openwisp-controller: `127.0.0.1:8000/admin`
-- openwisp-network-topology: `127.0.0.1:8001/admin`
+- openwisp-topology: `127.0.0.1:8001/admin`
 - openwisp-radius: `127.0.0.1:8002/admin`
 - openwisp-dashboard: `127.0.0.1:8003/admin`
 
@@ -132,7 +132,7 @@ $ docker-machine ssh manger1
 10. After all the containers are ready, you may go to any of the IPs of the swarm and use ports as following to checkout the deployment:
 
 - openwisp-controller: `<NODE_IP>:8000/admin`
-- openwisp-network-topology: `<NODE_IP>:8001/admin`
+- openwisp-topology: `<NODE_IP>:8001/admin`
 - openwisp-radius: `<NODE_IP>:8002/admin`
 - openwisp-dashboard: `<NODE_IP>:8003/admin`
 
@@ -152,6 +152,6 @@ Guide to build images again with modification or with different environment vari
 4. You can build the containers with `docker-compose build`. 
 5. After that do `docker-compose up`, when the containers are ready, you can test them out by going to(Default username & password are `admin`): 
 - openwisp-controller: `127.0.0.1:8000/admin`
-- openwisp-network-topology: `127.0.0.1:8001/admin`
+- openwisp-topology: `127.0.0.1:8001/admin`
 - openwisp-radius: `127.0.0.1:8002/admin`
 - openwisp-dashboard: `127.0.0.1:8003/admin`

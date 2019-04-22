@@ -6,8 +6,6 @@ RUN pip install openwisp-network-topology psycopg2 uwsgi
 
 FROM BASE
 
-ARG CONTAINER_PORT=8001
-
 ENV DB_ENGINE django.db.backends.postgresql
 ENV DB_NAME openwisp_db
 ENV DB_USER admin
@@ -22,20 +20,20 @@ ENV DJANGO_DEBUG False
 ENV DJANGO_DEFAULT_FROM_EMAIL example@email.com
 ENV DJANGO_SECRET_KEY DEFAULT_BAD_KEY
 ENV DJANGO_EMAIL_PORT 1025
-ENV CONTAINER_PORT ${CONTAINER_PORT}
+ENV CONTAINER_PORT 8003
 ENV DJANGO_EMAIL_BACKEND django.core.mail.backends.console.EmailBackend
 ENV OPENWISP_DASHBOARD_PROTOCOL http
 ENV OPENWISP_DASHBOARD_HOST dashboard
-ENV OPENWISP_DASHBOARD_PORT 8003
+ENV OPENWISP_DASHBOARD_LISTEN_PORT 8000
 ENV MODULE_NAME topology
 
 COPY ./common/ /opt/openwisp/
-COPY ./openwisp_network_topology/module_settings.py /opt/openwisp/openwisp/module_settings.py
-COPY ./openwisp_network_topology/urls.py /opt/openwisp/openwisp/urls.py
+COPY ./openwisp_topology/module_settings.py /opt/openwisp/openwisp/module_settings.py
+COPY ./openwisp_topology/urls.py /opt/openwisp/openwisp/urls.py
 
 
 RUN chmod +x /opt/openwisp/init_command.sh
 
-EXPOSE ${CONTAINER_PORT}
+EXPOSE ${TOPOLOGY_APP_PORT}
 
 CMD /opt/openwisp/init_command.sh
