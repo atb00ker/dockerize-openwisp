@@ -2,76 +2,6 @@
 apiVersion: v1
 kind: ReplicationController
 metadata:
-  name: openwisp-controller
-spec:
-  replicas: 3
-  template:
-    metadata:
-      labels:
-        app: openwisp-controller
-    spec:
-      containers:
-      - name: openwisp-controller
-        image: atb00ker/ready-to-run:openwisp-controller
-        imagePullPolicy: "Always"
-        ports:
-          - containerPort: 8000
-        envFrom:
-          - configMapRef:
-              name: common-config
-          volumeMounts:
-            - mountPath: /opt/openwisp/media
-              name: openwisp-controller-data
-      volumes:
-        - name: openwisp-controller-data
-          persistentVolumeClaim:
-            claimName: controller-pv-claim
----
-apiVersion: v1
-kind: ReplicationController
-metadata:
-  name: openwisp-network-topology
-spec:
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: openwisp-network-topology
-    spec:
-      containers:
-      - name: openwisp-network-topology
-        image: atb00ker/ready-to-run:openwisp-network-topology
-        imagePullPolicy: "Always"
-        ports:
-          - containerPort: 8001
-        envFrom:
-          - configMapRef:
-              name: common-config
----
-apiVersion: v1
-kind: ReplicationController
-metadata:
-  name: openwisp-radius
-spec:
-  replicas: 4
-  template:
-    metadata:
-      labels:
-        app: openwisp-radius
-    spec:
-      containers:
-      - name: openwisp-radius
-        image: atb00ker/ready-to-run:openwisp-radius
-        imagePullPolicy: "Always"
-        ports:
-          - containerPort: 8002
-        envFrom:
-          - configMapRef:
-              name: common-config
----
-apiVersion: v1
-kind: ReplicationController
-metadata:
   name: openwisp-dashboard
 spec:
   replicas: 1
@@ -83,30 +13,104 @@ spec:
       containers:      
       - name: openwisp-dashboard
         image: atb00ker/ready-to-run:openwisp-dashboard
-        imagePullPolicy: "Always"
         ports:
           - containerPort: 8003
         envFrom:
           - configMapRef:
               name: common-config
+        volumeMounts:
+          - mountPath: /opt/openwisp/static/dashboard
+            name: openwisp-dashboard-static
+      volumes:
+        - name: openwisp-dashboard-static
+          persistentVolumeClaim:
+            claimName: static-pv-claim
 ---
 apiVersion: v1
 kind: ReplicationController
 metadata:
-  name: redis
+  name: openwisp-controller
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: redis
+        app: openwisp-controller
     spec:
       containers:
-      - name: redis
-        image: redis:alpine
-        imagePullPolicy: "Always"
+      - name: openwisp-controller
+        image: atb00ker/ready-to-run:openwisp-controller
         ports:
-          - containerPort: 6379
+          - containerPort: 8000
+        envFrom:
+          - configMapRef:
+              name: common-config
+        volumeMounts:
+          - mountPath: /opt/openwisp/media
+            name: openwisp-controller-data
+          - mountPath: /opt/openwisp/static/controller
+            name: openwisp-controller-static
+      volumes:
+        - name: openwisp-controller-data
+          persistentVolumeClaim:
+            claimName: controller-pv-claim
+        - name: openwisp-controller-static
+          persistentVolumeClaim:
+            claimName: static-pv-claim
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: openwisp-radius
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openwisp-radius
+    spec:
+      containers:
+      - name: openwisp-radius
+        image: atb00ker/ready-to-run:openwisp-radius
+        ports:
+          - containerPort: 8002
+        envFrom:
+          - configMapRef:
+              name: common-config
+        volumeMounts:
+          - mountPath: /opt/openwisp/static/radius
+            name: openwisp-radius-static
+      volumes:
+        - name: openwisp-radius-static
+          persistentVolumeClaim:
+            claimName: static-pv-claim
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: openwisp-topology
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openwisp-topology
+    spec:
+      containers:
+      - name: openwisp-topology
+        image: atb00ker/ready-to-run:openwisp-topology
+        ports:
+          - containerPort: 8001
+        envFrom:
+          - configMapRef:
+              name: common-config
+        volumeMounts:
+          - mountPath: /opt/openwisp/static/topology
+            name: openwisp-topology-static
+      volumes:
+        - name: openwisp-topology-static
+          persistentVolumeClaim:
+            claimName: static-pv-claim
 ---
 apiVersion: v1
 kind: ReplicationController
@@ -122,16 +126,22 @@ spec:
       containers:
       - name: openwisp-nginx
         image: atb00ker/ready-to-run:openwisp-nginx
-        imagePullPolicy: "Always"
         ports:
-          - name: openwisp-dashboard
+          - name: dashboard
             containerPort: 8080
-          - name: openwisp-controller
+          - name: controller
             containerPort: 8081
-          - name: openwisp-radius
+          - name: radius
             containerPort: 8082
-          - name: openwisp-topology
+          - name: topology
             containerPort: 8083
+        volumeMounts:
+          - mountPath: /opt/openwisp/static/
+            name: openwisp-nginx-static
+      volumes:
+        - name: openwisp-nginx-static
+          persistentVolumeClaim:
+            claimName: static-pv-claim
 ---
 apiVersion: v1
 kind: ReplicationController
@@ -147,7 +157,6 @@ spec:
       containers:
         - name: openwisp-postgresql
           image: mdillon/postgis:10-alpine
-          imagePullPolicy: "Always"
           ports:
             - containerPort: 5432
           envFrom:
@@ -160,3 +169,20 @@ spec:
         - name: openwisp-postgres-data
           persistentVolumeClaim:
             claimName: postgres-pv-claim
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:alpine  
+        ports:
+          - containerPort: 6379

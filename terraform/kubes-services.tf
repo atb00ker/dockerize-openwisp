@@ -1,6 +1,25 @@
+resource "kubernetes_service" "openwisp-dashboard" {
+  metadata {
+    name = "dashboard"
+  }
+
+  spec {
+    selector {
+      App = "${kubernetes_replication_controller.openwisp-dashboard.metadata.0.labels.App}"
+    }
+
+    port {
+      port        = 8000
+      target_port = 8000
+    }
+
+    type = "LoadBalancer"
+  }
+}
+
 resource "kubernetes_service" "openwisp-controller" {
   metadata {
-    name = "openwisp-controller"
+    name = "controller"
   }
 
   spec {
@@ -9,38 +28,17 @@ resource "kubernetes_service" "openwisp-controller" {
     }
 
     port {
-      port        = 8000
-      target_port = 8000
-    }
-
-    external_ips = "${var.external_ip}"
-    type         = "LoadBalancer"
-  }
-}
-
-resource "kubernetes_service" "openwisp-network-topology" {
-  metadata {
-    name = "openwisp-network-topology"
-  }
-
-  spec {
-    selector {
-      App = "${kubernetes_replication_controller.openwisp-network-topology.metadata.0.labels.App}"
-    }
-
-    port {
       port        = 8001
       target_port = 8001
     }
 
-    external_ips = "${var.external_ip}"
-    type         = "LoadBalancer"
+    type = "LoadBalancer"
   }
 }
 
 resource "kubernetes_service" "openwisp-radius" {
   metadata {
-    name = "openwisp-radius"
+    name = "radius"
   }
 
   spec {
@@ -53,19 +51,18 @@ resource "kubernetes_service" "openwisp-radius" {
       target_port = 8002
     }
 
-    external_ips = "${var.external_ip}"
-    type         = "LoadBalancer"
+    type = "LoadBalancer"
   }
 }
 
-resource "kubernetes_service" "openwisp-dashboard" {
+resource "kubernetes_service" "openwisp-topology" {
   metadata {
-    name = "openwisp-dashboard"
+    name = "topology"
   }
 
   spec {
     selector {
-      App = "${kubernetes_replication_controller.openwisp-dashboard.metadata.0.labels.App}"
+      App = "${kubernetes_replication_controller.openwisp-topology.metadata.0.labels.App}"
     }
 
     port {
@@ -73,8 +70,46 @@ resource "kubernetes_service" "openwisp-dashboard" {
       target_port = 8003
     }
 
+    type = "LoadBalancer"
+  }
+}
+
+resource "kubernetes_service" "openwisp-nginx" {
+  metadata {
+    name = "openwisp-nginx"
+
+    labels {
+      App = "openwisp-nginx"
+    }
+  }
+
+  spec {
+    selector {
+      App = "${kubernetes_replication_controller.openwisp-nginx.metadata.0.labels.App}"
+    }
+
+    port {
+      name = "dashboard"
+      port = 8080
+    }
+
+    port {
+      name = "controller"
+      port = 8081
+    }
+
+    port {
+      name = "radius"
+      port = 8082
+    }
+
+    port {
+      name = "topology"
+      port = 8083
+    }
+
     external_ips = "${var.external_ip}"
-    type         = "LoadBalancer"
+    type         = "NodePort"
   }
 }
 
@@ -95,40 +130,6 @@ resource "kubernetes_service" "openwisp-postgresql" {
     port {
       port        = 5432
       target_port = 5432
-    }
-
-    type = "NodePort"
-  }
-}
-resource "kubernetes_service" "openwisp-nginx" {
-  metadata {
-    name = "openwisp-nginx"
-
-    labels {
-      App = "openwisp-nginx"
-    }
-  }
-
-  spec {
-    selector {
-      App = "${kubernetes_replication_controller.openwisp-nginx.metadata.0.labels.App}"
-    }
-
-    port {
-      name = "openwisp-dashboard"
-      port = 8080
-    }
-    port {
-      name = "openwisp-controller"
-      port = 8081
-    }
-    port {
-      name = "openwisp-radius"
-      port = 8082
-    }
-    port {
-      name = "openwisp-topology"
-      port = 8083
     }
 
     type = "NodePort"

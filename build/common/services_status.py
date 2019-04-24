@@ -3,6 +3,7 @@ from urllib.error import URLError, HTTPError
 import os
 import time
 import sys
+import logging
 
 
 def database_status():
@@ -49,23 +50,23 @@ if __name__ == "__main__":
     # Database Connection
     if "database" in arguments:
         import psycopg2
-        print("Waiting for database to become available...")
+        logging.info("Waiting for database to become available...")
         connected = False
         while not connected:
             connected = database_status()
-        print("Connection with database established.")
+        logging.info("Connection with database established.")
     # OpenWISP Dashboard Connection
     if "dashboard" in arguments:
-        print("Waiting for OpenWISP dashboard to become available...")
+        logging.info("Waiting for OpenWISP dashboard to become available...")
         connected = False
         while not connected:
             connected = dashboard_status()
-        print("Connection with OpenWISP dashboard established.")
+        logging.info("Connection with OpenWISP dashboard established.")
     # Redis Connection
     if "redis" in arguments:
         import redis
-        print("Waiting for redis to become available...")
+        logging.info("Waiting for redis to become available...")
         connected = False
         while not connected:
             connected = redis_status()
-        print("Connection with redis established.")
+        logging.info("Connection with redis established.")

@@ -1,3 +1,63 @@
+resource "kubernetes_replication_controller" "openwisp-dashboard" {
+  metadata {
+    name = "openwisp-dashboard"
+
+    labels {
+      App = "openwisp-dashboard"
+    }
+  }
+
+  spec {
+    replicas = "${var.dashboard_instances}"
+
+    selector {
+      App = "openwisp-dashboard"
+    }
+
+    template {
+      metadata {
+        labels {
+          App = "openwisp-dashboard"
+        }
+      }
+
+      spec {
+        container {
+          image = "atb00ker/ready-to-run:openwisp-dashboard"
+          name  = "openwisp-dashboard"
+
+          port {
+            container_port = 8000
+          }
+
+          env_from {
+            config_map_ref {
+              name = "${kubernetes_config_map.common-config.metadata.0.name}"
+            }
+          }
+
+          volume_mount {
+            name       = "openwisp-dashboard-static"
+            mount_path = "/opt/openwisp/static/dashboard/"
+          }
+        }
+
+        volume {
+          name = "openwisp-dashboard-static"
+
+          persistent_volume_claim {
+            claim_name = "static-pv-claim"
+          }
+        }
+      }
+    }
+  }
+
+  depends_on = ["kubernetes_replication_controller.openwisp-postgresql",
+    "kubernetes_replication_controller.redis",
+  ]
+}
+
 resource "kubernetes_replication_controller" "openwisp-controller" {
   metadata {
     name = "openwisp-controller"
@@ -27,18 +87,26 @@ resource "kubernetes_replication_controller" "openwisp-controller" {
           name  = "openwisp-controller"
 
           port {
-            container_port = 8000
+            container_port = 8001
           }
+
           volume_mount {
             name       = "openwisp-postgres-data"
             mount_path = "/opt/openwisp/media"
           }
+
+          volume_mount {
+            name       = "openwisp-controller-static"
+            mount_path = "/opt/openwisp/static/controller/"
+          }
+
           env_from {
             config_map_ref {
               name = "${kubernetes_config_map.common-config.metadata.0.name}"
             }
           }
         }
+
         volume {
           name = "openwisp-controller-data"
 
@@ -46,12 +114,22 @@ resource "kubernetes_replication_controller" "openwisp-controller" {
             claim_name = "controller-pv-claim"
           }
         }
+
+        volume {
+          name = "openwisp-controller-static"
+
+          persistent_volume_claim {
+            claim_name = "static-pv-claim"
+          }
+        }
       }
     }
   }
-  depends_on = ["kubernetes_persistent_volume.controller-pv-volume", "kubernetes_persistent_volume_claim.controller-pv-claim", 
-  "kubernetes_replication_controller.openwisp-postgresql",
-  "kubernetes_replication_controller.redis"]
+
+  depends_on = ["kubernetes_persistent_volume.controller-pv-volume", "kubernetes_persistent_volume_claim.controller-pv-claim",
+    "kubernetes_replication_controller.openwisp-postgresql",
+    "kubernetes_replication_controller.redis",
+  ]
 }
 
 resource "kubernetes_replication_controller" "openwisp-radius" {
@@ -91,6 +169,19 @@ resource "kubernetes_replication_controller" "openwisp-radius" {
               name = "${kubernetes_config_map.common-config.metadata.0.name}"
             }
           }
+
+          volume_mount {
+            name       = "openwisp-radius-static"
+            mount_path = "/opt/openwisp/static/radius/"
+          }
+        }
+
+        volume {
+          name = "openwisp-radius-static"
+
+          persistent_volume_claim {
+            claim_name = "static-pv-claim"
+          }
         }
       }
     }
@@ -99,12 +190,12 @@ resource "kubernetes_replication_controller" "openwisp-radius" {
   depends_on = ["kubernetes_replication_controller.openwisp-postgresql"]
 }
 
-resource "kubernetes_replication_controller" "openwisp-network-topology" {
+resource "kubernetes_replication_controller" "openwisp-topology" {
   metadata {
-    name = "openwisp-network-topology"
+    name = "openwisp-topology"
 
     labels {
-      App = "openwisp-network-topology"
+      App = "openwisp-topology"
     }
   }
 
@@ -112,65 +203,20 @@ resource "kubernetes_replication_controller" "openwisp-network-topology" {
     replicas = "${var.topology_instances}"
 
     selector {
-      App = "openwisp-network-topology"
+      App = "openwisp-topology"
     }
 
     template {
       metadata {
         labels {
-          App = "openwisp-network-topology"
+          App = "openwisp-topology"
         }
       }
 
       spec {
         container {
           image = "atb00ker/ready-to-run:openwisp-network-topology"
-          name  = "openwisp-network-topology"
-
-          port {
-            container_port = 8001
-          }
-
-          env_from {
-            config_map_ref {
-              name = "${kubernetes_config_map.common-config.metadata.0.name}"
-            }
-          }
-        }
-      }
-    }
-  }
-
-  depends_on = ["kubernetes_replication_controller.openwisp-postgresql"]
-}
-
-resource "kubernetes_replication_controller" "openwisp-dashboard" {
-  metadata {
-    name = "openwisp-dashboard"
-
-    labels {
-      App = "openwisp-dashboard"
-    }
-  }
-
-  spec {
-    replicas = "${var.dashboard_instances}"
-
-    selector {
-      App = "openwisp-dashboard"
-    }
-
-    template {
-      metadata {
-        labels {
-          App = "openwisp-dashboard"
-        }
-      }
-
-      spec {
-        container {
-          image = "atb00ker/ready-to-run:openwisp-dashboard"
-          name  = "openwisp-dashboard"
+          name  = "openwisp-topology"
 
           port {
             container_port = 8003
@@ -181,50 +227,96 @@ resource "kubernetes_replication_controller" "openwisp-dashboard" {
               name = "${kubernetes_config_map.common-config.metadata.0.name}"
             }
           }
+
+          volume_mount {
+            name       = "openwisp-topology-static"
+            mount_path = "/opt/openwisp/static/topology/"
+          }
         }
-      }
-    }
-  }
 
-  depends_on = ["kubernetes_replication_controller.openwisp-postgresql",
-  "kubernetes_replication_controller.redis"]
-}
+        volume {
+          name = "openwisp-topology-static"
 
-resource "kubernetes_replication_controller" "redis" {
-  metadata {
-    name = "redis"
-
-    labels {
-      App = "redis"
-    }
-  }
-
-  spec {
-    replicas = "${var.redis_instances}"
-
-    selector {
-      App = "redis"
-    }
-
-    template {
-      metadata {
-        labels {
-          App = "redis"
-        }
-      }
-
-      spec {
-        container {
-          image = "redis:alpine"
-          name  = "redis"
-
-          port {
-            container_port = 6379
+          persistent_volume_claim {
+            claim_name = "static-pv-claim"
           }
         }
       }
     }
   }
+
+  depends_on = ["kubernetes_replication_controller.openwisp-postgresql"]
+}
+
+resource "kubernetes_replication_controller" "openwisp-nginx" {
+  metadata {
+    name = "openwisp-nginx"
+
+    labels {
+      App = "openwisp-nginx"
+    }
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      App = "openwisp-nginx"
+    }
+
+    template {
+      metadata {
+        labels {
+          App = "openwisp-nginx"
+        }
+      }
+
+      spec {
+        container {
+          image = "atb00ker/ready-to-run:openwisp-nginx"
+          name  = "openwisp-nginx"
+
+          port {
+            name           = "dashboard"
+            container_port = 8080
+          }
+
+          port {
+            name           = "controller"
+            container_port = 8081
+          }
+
+          port {
+            name           = "radius"
+            container_port = 8082
+          }
+
+          port {
+            name           = "topology"
+            container_port = 8083
+          }
+
+          volume_mount {
+            name       = "openwisp-nginx-static"
+            mount_path = "/opt/openwisp/static/"
+          }
+        }
+
+        volume {
+          name = "openwisp-nginx-static"
+
+          persistent_volume_claim {
+            claim_name = "static-pv-claim"
+          }
+        }
+      }
+    }
+  }
+
+  depends_on = ["kubernetes_replication_controller.openwisp-dashboard", "kubernetes_replication_controller.openwisp-controller",
+    "kubernetes_replication_controller.openwisp-radius",
+    "kubernetes_replication_controller.openwisp-topology",
+  ]
 }
 
 resource "kubernetes_replication_controller" "openwisp-postgresql" {
@@ -284,49 +376,37 @@ resource "kubernetes_replication_controller" "openwisp-postgresql" {
 
   depends_on = ["kubernetes_persistent_volume.postgres-pv-volume", "kubernetes_persistent_volume_claim.postgres-pv-claim"]
 }
-resource "kubernetes_replication_controller" "openwisp-nginx" {
+
+resource "kubernetes_replication_controller" "redis" {
   metadata {
-    name = "openwisp-nginx"
+    name = "redis"
 
     labels {
-      App = "openwisp-nginx"
+      App = "redis"
     }
   }
 
   spec {
-    replicas = 1
+    replicas = "${var.redis_instances}"
 
     selector {
-      App = "openwisp-nginx"
+      App = "redis"
     }
 
     template {
       metadata {
         labels {
-          App = "openwisp-nginx"
+          App = "redis"
         }
       }
 
       spec {
         container {
-          image = "atb00ker/ready-to-run:openwisp-nginx"
-          name  = "openwisp-nginx"
+          image = "redis:alpine"
+          name  = "redis"
 
           port {
-            name = "openwisp-dashboard"
-            container_port = 8080
-          }
-          port {
-            name = "openwisp-controller"
-            container_port = 8081
-          }
-          port {
-            name = "openwisp-radius"
-            container_port = 8082
-          }
-          port {
-            name = "openwisp-topology"
-            container_port = 8083
+            container_port = 6379
           }
         }
       }

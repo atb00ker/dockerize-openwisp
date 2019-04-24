@@ -1,6 +1,5 @@
 FROM nginx:alpine
 
-COPY ./nginx/nginx.template.conf /etc/nginx/nginx.template.conf
 COPY ./nginx/init_command.sh /etc/nginx/init_command.sh
 
 # USWGI pass ports
@@ -18,6 +17,7 @@ EXPOSE ${OPENWISP_CONTROLLER_LISTEN_PORT}
 EXPOSE ${OPENWISP_RADIUS_LISTEN_PORT}
 EXPOSE ${OPENWISP_TOPOLOGY_LISTEN_PORT}
 
+COPY ./nginx/nginx.template.conf /etc/nginx/nginx.template.conf
 RUN chmod +x /etc/nginx/init_command.sh
 
 CMD /etc/nginx/init_command.sh

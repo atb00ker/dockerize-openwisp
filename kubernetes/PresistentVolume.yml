@@ -13,7 +13,7 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: "/mnt/psql"
+    path: "/opt/openwisp/psql"
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
@@ -43,7 +43,7 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: "/mnt/media"
+    path: "/opt/openwisp/media"
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
@@ -51,6 +51,31 @@ metadata:
   name: controller-pv-claim
   labels:
     app: openwisp-controller
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Mi
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: static-pv-volume
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/opt/openwisp/static"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: static-pv-claim
 spec:
   storageClassName: manual
   accessModes:
