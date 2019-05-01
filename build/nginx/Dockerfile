@@ -1,23 +1,37 @@
 FROM nginx:alpine
 
-COPY ./nginx/init_command.sh /etc/nginx/init_command.sh
+WORKDIR /etc/nginx/
 
-# USWGI pass ports
-ENV DASHBOARD_APP_PORT 8000
-ENV CONTROLLER_APP_PORT 8001
-ENV RADIUS_APP_PORT 8002
-ENV TOPOLOGY_APP_PORT 8003
-# Listen ports
-ENV OPENWISP_DASHBOARD_LISTEN_PORT 8080
-ENV OPENWISP_CONTROLLER_LISTEN_PORT 8081
-ENV OPENWISP_RADIUS_LISTEN_PORT 8082
-ENV OPENWISP_TOPOLOGY_LISTEN_PORT 8083
-EXPOSE ${OPENWISP_DASHBOARD_LISTEN_PORT}
-EXPOSE ${OPENWISP_CONTROLLER_LISTEN_PORT}
-EXPOSE ${OPENWISP_RADIUS_LISTEN_PORT}
-EXPOSE ${OPENWISP_TOPOLOGY_LISTEN_PORT}
+COPY ./common/services_status.py \
+    ./nginx/init_command.sh \ 
+    ./nginx/openwisp.ssl.template.conf \ 
+    ./nginx/openwisp.template.conf \ 
+    /etc/nginx/
 
-COPY ./nginx/nginx.template.conf /etc/nginx/nginx.template.conf
 RUN chmod +x /etc/nginx/init_command.sh
-
 CMD /etc/nginx/init_command.sh
+
+ENV MODULE_NAME=nginx \
+    PYTHONUNBUFFERED=1 \
+    DOLLAR=$ \
+    ORCHESTRATION_CERT_MODE=False \
+    NGINX_CLIENT_BODY_SIZE=5M \
+    NGINX_GZIP=off \
+    NGINX_IP6=True \
+    # USWGI pass_port
+    DASHBOARD_APP_PORT=8000 \
+    CONTROLLER_APP_PORT=8001 \
+    RADIUS_APP_PORT=8002 \
+    TOPOLOGY_APP_PORT=8003 \
+    # Application Service Name
+    DASHBOARD_APP_SERVICE=dashboard \
+    CONTROLLER_APP_SERVICE=controller \
+    RADIUS_APP_SERVICE=radius \
+    TOPOLOGY_APP_SERVICE=topology \
+    # Listen domains
+    DASHBOARD_DOMAIN=dashboard.openwisp.org \
+    CONTROLLER_DOMAIN=controller.openwisp.org \
+    RADIUS_DOMAIN=radius.openwisp.org \
+    TOPOLOGY_DOMAIN=topology.openwisp.org
+
+EXPOSE 80 443

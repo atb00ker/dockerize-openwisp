@@ -1,9 +1,10 @@
-from urllib.request import Request, urlopen
-from urllib.error import URLError, HTTPError
+#!/usr/bin/python3
+
 import os
 import time
 import sys
-import logging
+import socket
+from utils import uwsgi_curl
 
 
 def database_status():
@@ -23,11 +24,10 @@ def database_status():
 
 
 def dashboard_status():
-    req = Request(os.environ['OPENWISP_DASHBOARD_PROTOCOL'] + "://" + os.environ['OPENWISP_DASHBOARD_HOST'] +
-                  ":" + os.environ['OPENWISP_DASHBOARD_LISTEN_PORT'])
     try:
-        _ = urlopen(req)
-    except (URLError, HTTPError):
+        uwsgi_curl(os.environ['DASHBOARD_APP_SERVICE'] +
+                   ":" + os.environ['DASHBOARD_APP_PORT'])
+    except OSError:
         time.sleep(3)
         return False
     else:
@@ -50,23 +50,23 @@ if __name__ == "__main__":
     # Database Connection
     if "database" in arguments:
         import psycopg2
-        logging.info("Waiting for database to become available...")
+        print("Waiting for database to become available...")
         connected = False
         while not connected:
             connected = database_status()
-        logging.info("Connection with database established.")
+        print("Connection with database established.")
     # OpenWISP Dashboard Connection
     if "dashboard" in arguments:
-        logging.info("Waiting for OpenWISP dashboard to become available...")
+        print("Waiting for OpenWISP dashboard to become available...")
         connected = False
         while not connected:
             connected = dashboard_status()
-        logging.info("Connection with OpenWISP dashboard established.")
+        print("Connection with OpenWISP dashboard established.")
     # Redis Connection
     if "redis" in arguments:
         import redis
-        logging.info("Waiting for redis to become available...")
+        print("Waiting for redis to become available...")
         connected = False
         while not connected:
             connected = redis_status()
-        logging.info("Connection with redis established.")
+        print("Connection with redis established.")

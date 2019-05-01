@@ -21,9 +21,6 @@ resource "kubernetes_config_map" "common-config" {
 
   data {
     DB_HOST                        = "openwisp-postgresql"
-    OPENWISP_DASHBOARD_PROTOCOL    = "http"
-    OPENWISP_DASHBOARD_HOST        = "openwisp-nginx"
     DJANGO_SECRET_KEY              = "MY_COMPANY_SECRET_KEY"
-    OPENWISP_DASHBOARD_LISTEN_PORT = "8080"
   }
 }

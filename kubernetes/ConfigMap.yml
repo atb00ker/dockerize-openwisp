@@ -16,7 +16,4 @@ metadata:
   name: common-config
 data:
   DJANGO_SECRET_KEY: MY_COMPANY_SECRET_KEY
-  OPENWISP_DASHBOARD_PROTOCOL: http
-  OPENWISP_DASHBOARD_HOST: openwisp-nginx
-  OPENWISP_DASHBOARD_LISTEN_PORT: "8080"
   DB_HOST: postgresql

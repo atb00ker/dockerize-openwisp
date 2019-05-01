@@ -1,6 +1,6 @@
 FROM python:3.7-alpine AS BASE
 
-WORKDIR /opt/openwisp
+WORKDIR /opt/openwisp/
 
 RUN apk add --update --no-cache build-base libffi-dev openssl-dev postgresql-dev gettext linux-headers python3-dev zlib-dev jpeg-dev musl-dev git --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing gdal-dev geos-dev 
 
@@ -9,36 +9,39 @@ RUN pip install -r requirements.txt
 
 FROM BASE
 
-ENV DB_ENGINE django.contrib.gis.db.backends.postgis
-ENV DB_NAME openwisp_db
-ENV DB_USER admin
-ENV DB_PASS admin
-ENV DB_HOST postgres
-ENV DB_PORT 5432
-ENV DJANGO_LANGUAGE_CODE=en-gb
-ENV DJANGO_TIME_ZONE UTC
-ENV DJANGO_MEDIA_VOLUME_LOCATION ./media
-ENV DJANGO_ALLOWED_HOSTS *
-ENV REDIS_HOST redis
-ENV DJANGO_DEBUG False
-ENV DJANGO_X509_DEFAULT_CERT_VALIDITY 1825
-ENV DJANGO_X509_DEFAULT_CA_VALIDITY 3650
-ENV DJANGO_DEFAULT_FROM_EMAIL example@email.com
-ENV DJANGO_SECRET_KEY DEFAULT_BAD_KEY
-ENV DJANGO_EMAIL_PORT 1025
-ENV DJANGO_EMAIL_BACKEND django.core.mail.backends.console.EmailBackend
-ENV CONTAINER_PORT 8001
-ENV OPENWISP_DASHBOARD_PROTOCOL http
-ENV OPENWISP_DASHBOARD_HOST dashboard
-ENV OPENWISP_DASHBOARD_LISTEN_PORT 8000
-ENV MODULE_NAME controller
-
 COPY ./common/ /opt/openwisp/
-COPY ./openwisp_controller/module_settings.py /opt/openwisp/openwisp/module_settings.py
-COPY ./openwisp_controller/urls.py /opt/openwisp/openwisp/urls.py
+COPY ./openwisp_controller/urls.py \
+    ./openwisp_controller/module_settings.py \
+    /opt/openwisp/openwisp/
 
 RUN chmod +x /opt/openwisp/init_command.sh
-
-EXPOSE ${CONTAINER_PORT}
-
 CMD /opt/openwisp/init_command.sh
+
+ARG CONTROLLER_APP_PORT=8001
+ENV MODULE_NAME=controller \
+    PYTHONUNBUFFERED=1 \
+    TZ=UTC \
+    CONTAINER_PORT=$CONTROLLER_APP_PORT \
+    DASHBOARD_APP_PORT=8000 \
+    DB_ENGINE=django.contrib.gis.db.backends.postgis \
+    DB_NAME=openwisp_db \
+    DB_USER=admin \
+    DB_PASS=admin \
+    DB_HOST=postgres \
+    DB_PORT=5432 \
+    DB_SSLMODE=disable \
+    DB_SSLROOTCERT='' \
+    DJANGO_LANGUAGE_CODE=en-gb \
+    DJANGO_MEDIA_VOLUME_LOCATION=./media \
+    DJANGO_ALLOWED_HOSTS=* \
+    REDIS_HOST=redis \
+    DEBUG_MODE=False \
+    DJANGO_X509_DEFAULT_CERT_VALIDITY=1825 \
+    DJANGO_X509_DEFAULT_CA_VALIDITY=3650 \
+    DJANGO_DEFAULT_FROM_EMAIL=example@email.com \
+    DJANGO_SECRET_KEY=DEFAULT_BAD_KEY \
+    DJANGO_EMAIL_PORT=1025 \
+    DJANGO_EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend \
+    DASHBOARD_APP_SERVICE=dashboard
+
+EXPOSE $CONTROLLER_APP_PORT

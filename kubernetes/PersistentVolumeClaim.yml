@@ -20,11 +20,9 @@ spec:
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: controller-pv-claim
+  name: media-pv-claim
   annotations:
     volume.beta.kubernetes.io/storage-class: "nfs-provisioner"
-  labels:
-    app: openwisp-controller
 spec:
   storageClassName: nfs-provisioner
   accessModes:

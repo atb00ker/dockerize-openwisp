@@ -89,14 +89,10 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - name: openwisp-dashboard
-      port: 8080
-    - name: openwisp-controller
-      port: 8081
-    - name: openwisp-radius
-      port: 8082
-    - name: openwisp-topology
-      port: 8083
+    - name: insecure
+      port: 80
+    - name: secure
+      port: 443
   selector:
    app: openwisp-nginx
   externalIPs:
