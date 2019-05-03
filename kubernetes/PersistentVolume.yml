@@ -7,13 +7,13 @@ metadata:
     type: local
     app: openwisp-postgresql
 spec:
-  storageClassName: manual
+  storageClassName: nfs-provisioner
   capacity:
     storage: 100Mi
   accessModes:
     - ReadWriteMany
-  hostPath:
-    path: "/opt/openwisp/psql"
+  nfs:
+  storageClassName: nfs-provisioner
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
@@ -22,7 +22,7 @@ metadata:
   labels:
     app: openwisp-postgresql
 spec:
-  storageClassName: manual
+  storageClassName: nfs-provisioner
   accessModes:
     - ReadWriteMany
   resources:
@@ -37,7 +37,7 @@ metadata:
     type: local
     app: openwisp-controller
 spec:
-  storageClassName: manual
+  storageClassName: nfs-provisioner
   capacity:
     storage: 100Mi
   accessModes:
@@ -52,7 +52,7 @@ metadata:
   labels:
     app: openwisp-controller
 spec:
-  storageClassName: manual
+  storageClassName: nfs-provisioner
   accessModes:
     - ReadWriteMany
   resources:
@@ -64,7 +64,7 @@ apiVersion: v1
 metadata:
   name: static-pv-volume
 spec:
-  storageClassName: manual
+  storageClassName: nfs-provisioner
   capacity:
     storage: 100Mi
   accessModes:
@@ -77,7 +77,7 @@ apiVersion: v1
 metadata:
   name: static-pv-claim
 spec:
-  storageClassName: manual
+  storageClassName: nfs-provisioner
   accessModes:
     - ReadWriteMany
   resources:

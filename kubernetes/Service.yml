@@ -5,7 +5,7 @@ metadata:
   labels:
       app: openwisp-dashboard
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - port: 8000
       targetPort: 8000
@@ -19,7 +19,7 @@ metadata:
   labels:
       app: openwisp-controller
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - port: 8001
       targetPort: 8001
@@ -33,7 +33,7 @@ metadata:
   labels:
       app: openwisp-radius
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - port: 8002
       targetPort: 8002
@@ -47,7 +47,7 @@ metadata:
   labels:
       app: openwisp-topology
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - port: 8003
       targetPort: 8003
@@ -61,7 +61,7 @@ metadata:
   labels:
     app: openwisp-postgresql
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
    - port: 5432
   selector:
@@ -74,7 +74,7 @@ metadata:
   labels:
     app: redis
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
    - port: 6379
   selector:
@@ -87,7 +87,7 @@ metadata:
   labels:
     app: openwisp-nginx
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
     - name: openwisp-dashboard
       port: 8080
@@ -100,4 +100,6 @@ spec:
   selector:
    app: openwisp-nginx
   externalIPs:
-    - 192.168.1.6
+    - 172.16.6.22
+    - 172.16.6.23
+    - 172.16.6.24
