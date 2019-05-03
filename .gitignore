@@ -105,3 +105,4 @@ venv.bak/
 *.tfstate
 *.tfstate.backup
 media/
+/.idea/
