@@ -21,7 +21,6 @@ spec:
         volumeMounts:
           - mountPath: /opt/openwisp/static
             name: openwisp-dashboard-static
-            subPath: dashboard
       volumes:
         - name: openwisp-dashboard-static
           persistentVolumeClaim:
@@ -51,7 +50,6 @@ spec:
             name: openwisp-controller-data
           - mountPath: /opt/openwisp/static
             name: openwisp-controller-static
-            subPath: controller
       volumes:
         - name: openwisp-controller-data
           persistentVolumeClaim:
@@ -82,7 +80,6 @@ spec:
         volumeMounts:
           - mountPath: /opt/openwisp/static
             name: openwisp-radius-static
-            subPath: radius
       volumes:
         - name: openwisp-radius-static
           persistentVolumeClaim:
@@ -110,7 +107,6 @@ spec:
         volumeMounts:
           - mountPath: /opt/openwisp/static
             name: openwisp-topology-static
-            subPath: topology
       volumes:
         - name: openwisp-topology-static
           persistentVolumeClaim:

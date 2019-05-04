@@ -39,7 +39,6 @@ COPY ./openwisp_topology/module_settings.py /opt/openwisp/openwisp/topology_sett
 # OpenWISP Dashboard
 COPY ./openwisp_dashboard/load_init_data.py /opt/openwisp/load_init_data.py
 COPY ./openwisp_dashboard/urls.py /opt/openwisp/openwisp/urls.py
-COPY ./openwisp_dashboard/migrate_settings.py /opt/openwisp/openwisp/migrate_settings.py
 
 RUN chmod +x /opt/openwisp/init_command.sh
 

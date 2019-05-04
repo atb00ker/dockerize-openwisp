@@ -27,14 +27,28 @@ Images are available on docker hub and can be pulled from the following links:
 
 1. (optional) Setup a Kubernetes Cluster: A guide for setting up the cluster on bare-metal machines is available [here](https://blog.alexellis.io/kubernetes-in-10-minutes/) and the guide to get started with kubernetes-dashboard (Web UI) is available [here](https://github.com/kubernetes/dashboard).
 
-2. Set external IP: You need to set the external IP for all the services. This is the IP on which you will access your openwisp applications. All the services are in [this file](https://github.com/atb00ker/dockerize-openwisp/blob/master/kubernetes/Service.yml). Please do `ctrl+f` to find `192.168.1.6` and replace with your server's external IP in this file. 
+2. Set external IP: You need to set the external IP for all the services. This is the IP on which you will access your openwisp applications. All the services are in [this file](https://github.com/atb00ker/dockerize-openwisp/blob/master/kubernetes/Service.yml). Please do `ctrl+f` to find `172.16.6` and replace with your server's external IP in this file. 
 
 3. (optional) Customization: You can change the settings in the container by changing the environment variables. You can pass the environment variables by changing [this file](https://github.com/atb00ker/dockerize-openwisp/blob/master/kubernetes/ConfigMap.yml). You can add any of the variables from the [list here](https://github.com/atb00ker/dockerize-openwisp/blob/master/.env). 
 - The ConfigMap with name `postgres-config` will pass the environment variables only to the postgresql container. 
 - The ConfigMap with name `common-config` will pass the environment variables to all the openwisp containers.
 - The ConfigMap with name `controller-config` will pass the environment variables to only the openwisp-controller container. If required, new `ConfigMap` can be easily set and added to the service as done [here](https://github.com/atb00ker/dockerize-openwisp/blob/79021ca8ad1d1c083d2822f05143f3c80b0d8077/kubernetes/ReplicationController.yml#L19).
 
-4. Apply to Kubernetes Cluster: You need to apply all the files in the `kubernetes/` directory to your cluster. You can use the Web UI to create new components or you can use `kubectl apply -f <filename>` to apply from CLI. Some `ReplicationControllers` are dependant on other components, so it'll be useful to apply them at last. I recommend to follow this order:
+4. If you are doing bare-metal setup, follow the steps below to setup nfs-provisioner:
+
+4.1. Install NFS requirements: `sudo apt install nfs-kernel-server nfs-common`
+
+4.2. Setup storage directory:
+```
+sudo mkdir -p /mnt/kubes
+sudo chown nobody: /mnt/kubes
+```
+
+4.3. Export the directory file system - inside the `/etc/exports` file add line: `/mnt/kubes    *(rw,sync,no_root_squash,no_subtree_check,no_all_squash,insecure)` and then export `sudo exportfs -rav`
+
+4.4. `helm install --set storageClass.name=nfs-provisioner --set nfs.server=<ip-address> --set nfs.path=/mnt/kubes stable/nfs-client-provisioner`
+
+5. Apply to Kubernetes Cluster: You need to apply all the files in the `kubernetes/` directory to your cluster. You can use the Web UI to create new components or you can use `kubectl apply -f <filename>` to apply from CLI. Some `ReplicationControllers` are dependant on other components, so it'll be useful to apply them at last. I recommend to follow this order:
 ```
 $ kubectl apply -f ConfigMap.yml
 $ kubectl apply -f PresistentVolume.yml
@@ -42,7 +56,7 @@ $ kubectl apply -f Service.yml
 $ kubectl apply -f ReplicationController.yml
 ```
 
-5. Wait for a while. Containers will take a little while to boot up (~1 minute). You can see the status on the Web UI or on CLI by `kubectl get pods` command.
+6. Wait for a while. Containers will take a little while to boot up (~1 minute). You can see the status on the Web UI or on CLI by `kubectl get pods` command.
 
 
 ### Terraform

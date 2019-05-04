@@ -31,7 +31,7 @@ services:
       - postgres
       - redis
     volumes:
-      - /opt/openwisp/static/dashboard:/opt/openwisp/static/
+      - /opt/openwisp/static/:/opt/openwisp/static/
 
   controller:
     image:  atb00ker/ready-to-run:openwisp-controller
@@ -66,7 +66,7 @@ services:
       - redis
     volumes:
       - openwisp_media:/opt/openwisp/media
-      - /opt/openwisp/static/controller:/opt/openwisp/static/
+      - /opt/openwisp/static/:/opt/openwisp/static/
 
   radius:
     image: atb00ker/ready-to-run:openwisp-radius
@@ -97,7 +97,7 @@ services:
       - OPENWISP_DASHBOARD_LISTEN_PORT=${OPENWISP_DASHBOARD_LISTEN_PORT}
       - CONTAINER_PORT=${RADIUS_APP_PORT}
     volumes:
-      - /opt/openwisp/static/radius:/opt/openwisp/static/
+      - /opt/openwisp/static/:/opt/openwisp/static/
 
   topology:
     image: atb00ker/ready-to-run:openwisp-topology
@@ -129,7 +129,7 @@ services:
     depends_on:
       - postgres
     volumes:
-      - /opt/openwisp/static/topology:/opt/openwisp/static/
+      - /opt/openwisp/static/:/opt/openwisp/static/
 
   nginx:
     image: atb00ker/ready-to-run:openwisp-nginx
