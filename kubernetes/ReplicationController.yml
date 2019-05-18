@@ -131,15 +131,6 @@ spec:
       containers:
       - name: openwisp-nginx
         image: atb00ker/ready-to-run:openwisp-nginx
-        ports:
-          - name: dashboard
-            containerPort: 8080
-          - name: controller
-            containerPort: 8081
-          - name: radius
-            containerPort: 8082
-          - name: topology
-            containerPort: 8083
         volumeMounts:
           - mountPath: /opt/openwisp/static
             name: openwisp-nginx-static
