@@ -21,7 +21,12 @@ spec:
         volumeMounts:
           - mountPath: /opt/openwisp/static
             name: openwisp-dashboard-static
+          - mountPath: /opt/openwisp/media
+            name: openwisp-media-data
       volumes:
+        - name: openwisp-media-data
+          persistentVolumeClaim:
+            claimName: media-pv-claim
         - name: openwisp-dashboard-static
           persistentVolumeClaim:
             claimName: static-pv-claim
@@ -46,14 +51,14 @@ spec:
           - configMapRef:
               name: common-config
         volumeMounts:
-          - mountPath: /opt/openwisp/media
-            name: openwisp-controller-data
           - mountPath: /opt/openwisp/static
             name: openwisp-controller-static
+          - mountPath: /opt/openwisp/media
+            name: openwisp-media-data
       volumes:
-        - name: openwisp-controller-data
+        - name: openwisp-media-data
           persistentVolumeClaim:
-            claimName: controller-pv-claim
+            claimName: media-pv-claim
         - name: openwisp-controller-static
           persistentVolumeClaim:
             claimName: static-pv-claim
@@ -138,10 +143,15 @@ spec:
         volumeMounts:
           - mountPath: /opt/openwisp/static
             name: openwisp-nginx-static
+          - mountPath: /opt/openwisp/media
+            name: openwisp-media-data
       volumes:
         - name: openwisp-nginx-static
           persistentVolumeClaim:
             claimName: static-pv-claim
+        - name: openwisp-media-data
+          persistentVolumeClaim:
+            claimName: media-pv-claim
 ---
 apiVersion: v1
 kind: ReplicationController

@@ -1,5 +1,4 @@
 import os
-from openwisp.settings import *
 from openwisp.controller_settings import *
 from openwisp.radius_settings import *
 from openwisp.topology_settings import *
@@ -63,6 +62,3 @@ EXTENDED_APPS = ['django_freeradius',
 
 CORS_ORIGIN_ALLOW_ALL = bool(
     os.environ['DJANGO_DASHBOARD_CORS_ORIGIN_ALLOW_ALL'])
-
-OPENWISP_ORGANIZATON_USER_ADMIN = True
-OPENWISP_ORGANIZATON_OWNER_ADMIN = True

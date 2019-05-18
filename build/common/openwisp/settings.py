@@ -7,7 +7,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if os.environ['DJANGO_DEBUG'] == "True":
+if os.environ['DEBUG_MODE'] == "True":
     DEBUG = True
 else:
     DEBUG = False
@@ -73,7 +73,11 @@ DATABASES = {
         'USER': os.environ['DB_USER'],
         'PASSWORD': os.environ['DB_PASS'],
         'HOST': os.environ['DB_HOST'],
-        'PORT': os.environ['DB_PORT']
+        'PORT': os.environ['DB_PORT'],
+        'OPTIONS': {
+            'sslmode': os.environ['DB_SSLMODE'],
+            'sslrootcert': os.environ['DB_SSLROOTCERT'],
+        },
     },
 }
 
@@ -91,7 +95,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 
 LANGUAGE_CODE = os.environ['DJANGO_LANGUAGE_CODE']
-TIME_ZONE = os.environ['DJANGO_TIME_ZONE']
+TIME_ZONE = os.environ['TZ']
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True

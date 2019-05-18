@@ -1,42 +1,45 @@
 FROM python:3.7-alpine AS BASE
 
-WORKDIR /opt/openwisp
+WORKDIR /opt/openwisp/
 RUN apk add  --update --no-cache build-base postgresql-dev libffi-dev openssl-dev python3-dev zlib-dev jpeg-dev git gettext linux-headers
-RUN pip install https://github.com/openwisp/django-freeradius/tarball/master
-RUN pip install https://github.com/openwisp/openwisp-users/tarball/master
-RUN pip install -e git+git://github.com/openwisp/openwisp-radius#egg=openwisp_radius
-RUN pip install -e git+git://github.com/openwisp/openwisp-utils#egg=openwisp_utils
-RUN pip install psycopg2 uwsgi
+RUN pip install https://github.com/openwisp/django-freeradius/tarball/master && \
+    pip install https://github.com/openwisp/openwisp-users/tarball/master && \
+    pip install -e git+git://github.com/openwisp/openwisp-radius#egg=openwisp_radius && \
+    pip install -e git+git://github.com/openwisp/openwisp-utils#egg=openwisp_utils && \
+    pip install psycopg2 uwsgi
 
 FROM BASE
 
-ENV DB_ENGINE django.db.backends.postgresql
-ENV DB_NAME openwisp_db
-ENV DB_USER admin
-ENV DB_PASS admin
-ENV DB_HOST postgres
-ENV DB_PORT 5432
-ENV DJANGO_LANGUAGE_CODE=en-gb
-ENV DJANGO_TIME_ZONE UTC
-ENV DJANGO_MEDIA_VOLUME_LOCATION ./media
-ENV DJANGO_ALLOWED_HOSTS *
-ENV DJANGO_DEBUG False
-ENV DJANGO_DEFAULT_FROM_EMAIL example@email.com
-ENV DJANGO_SECRET_KEY DEFAULT_BAD_KEY
-ENV DJANGO_EMAIL_PORT 1025
-ENV CONTAINER_PORT 8002
-ENV DJANGO_EMAIL_BACKEND django.core.mail.backends.console.EmailBackend
-ENV OPENWISP_DASHBOARD_PROTOCOL http
-ENV OPENWISP_DASHBOARD_HOST dashboard
-ENV OPENWISP_DASHBOARD_LISTEN_PORT 8000
-ENV MODULE_NAME radius
-
 COPY ./common/ /opt/openwisp/
-COPY ./openwisp_radius/module_settings.py /opt/openwisp/openwisp/module_settings.py
-COPY ./openwisp_radius/urls.py /opt/openwisp/openwisp/urls.py
+COPY ./openwisp_radius/urls.py \ 
+    ./openwisp_radius/module_settings.py \
+    /opt/openwisp/openwisp/
 
 RUN chmod +x /opt/openwisp/init_command.sh
-
-EXPOSE ${CONTAINER_PORT}
-
 CMD /opt/openwisp/init_command.sh
+
+ARG RADIUS_APP_PORT=8002
+ENV MODULE_NAME=radius \
+    PYTHONUNBUFFERED=1 \
+    TZ=UTC \
+    CONTAINER_PORT=$RADIUS_APP_PORT \
+    DASHBOARD_APP_PORT=8000 \
+    DB_ENGINE=django.db.backends.postgresql \
+    DB_NAME=openwisp_db \
+    DB_USER=admin \
+    DB_PASS=admin \
+    DB_HOST=postgres \
+    DB_PORT=5432 \
+    DB_SSLMODE=disable \
+    DB_SSLROOTCERT='' \
+    DJANGO_LANGUAGE_CODE=en-gb \
+    DJANGO_MEDIA_VOLUME_LOCATION=./media \
+    DJANGO_ALLOWED_HOSTS=* \
+    DEBUG_MODE=False \
+    DJANGO_DEFAULT_FROM_EMAIL=example@email.com \
+    DJANGO_SECRET_KEY=DEFAULT_BAD_KEY \
+    DJANGO_EMAIL_PORT=1025 \
+    DJANGO_EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend \
+    DASHBOARD_APP_SERVICE=dashboard
+
+EXPOSE $RADIUS_APP_PORT

@@ -6,130 +6,80 @@ services:
     build: 
       context: build
       dockerfile: openwisp_dashboard/Dockerfile
+      args:
+        DASHBOARD_APP_PORT: $DASHBOARD_APP_PORT
     deploy:
       replicas: 1
     environment:
-      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
-      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
-      - DB_ENGINE=${DB_GIS_ENGINE}
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DJANGO_LANGUAGE_CODE=${DJANGO_LANGUAGE_CODE}
-      - DJANGO_TIME_ZONE=${DJANGO_TIME_ZONE}
-      - REDIS_HOST=${REDIS_HOST}
-      - DJANGO_DEBUG=${DJANGO_DEBUG}
-      - DJANGO_DEFAULT_FROM_EMAIL=${DJANGO_DEFAULT_FROM_EMAIL}
-      - DJANGO_EMAIL_PORT=${DJANGO_EMAIL_PORT}
-      - DJANGO_EMAIL_BACKEND=${DJANGO_EMAIL_BACKEND}
-      - DJANGO_DASHBOARD_CORS_ORIGIN_ALLOW_ALL=${DJANGO_DASHBOARD_CORS_ORIGIN_ALLOW_ALL}
-      - DJANGO_X509_DEFAULT_CERT_VALIDITY=${DJANGO_X509_DEFAULT_CERT_VALIDITY}
-      - DJANGO_X509_DEFAULT_CA_VALIDITY=${DJANGO_X509_DEFAULT_CA_VALIDITY}
+      - DB_ENGINE=$DB_GIS_ENGINE
+    env_file:
+      - .env
+    volumes:
+      - openwisp_static:/opt/openwisp/static
+      - openwisp_media:/opt/openwisp/media
     depends_on:
       - postgres
       - redis
-    volumes:
-      - /opt/openwisp/static/:/opt/openwisp/static/
 
   controller:
     image:  atb00ker/ready-to-run:openwisp-controller
     build: 
       context: build
       dockerfile: openwisp_controller/Dockerfile
-    environment: 
-      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
-      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
-      - DB_ENGINE=${DB_GIS_ENGINE}
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DJANGO_LANGUAGE_CODE=${DJANGO_LANGUAGE_CODE}
-      - DJANGO_TIME_ZONE=${DJANGO_TIME_ZONE}
-      - REDIS_HOST=${REDIS_HOST}
-      - DJANGO_DEBUG=${DJANGO_DEBUG}
-      - DJANGO_X509_DEFAULT_CERT_VALIDITY=${DJANGO_X509_DEFAULT_CERT_VALIDITY}
-      - DJANGO_X509_DEFAULT_CA_VALIDITY=${DJANGO_X509_DEFAULT_CA_VALIDITY}
-      - DJANGO_DEFAULT_FROM_EMAIL=${DJANGO_DEFAULT_FROM_EMAIL}
-      - DJANGO_EMAIL_PORT=${DJANGO_EMAIL_PORT}
-      - DJANGO_EMAIL_BACKEND=${DJANGO_EMAIL_BACKEND}
-      - OPENWISP_DASHBOARD_PROTOCOL=${OPENWISP_DASHBOARD_PROTOCOL}
-      - OPENWISP_DASHBOARD_HOST=${OPENWISP_DASHBOARD_HOST}
-      - OPENWISP_DASHBOARD_LISTEN_PORT=${OPENWISP_DASHBOARD_LISTEN_PORT}
+      args:
+        CONTROLLER_APP_PORT: $CONTROLLER_APP_PORT
     deploy:
       replicas: 1
+    env_file:
+      - .env
+    environment:
+      - DB_ENGINE=$DB_GIS_ENGINE
+    volumes:
+      - openwisp_media:/opt/openwisp/media
     depends_on:
       - postgres
       - redis
-    volumes:
-      - openwisp_media:/opt/openwisp/media
-      - /opt/openwisp/static/:/opt/openwisp/static/
+      - dashboard
 
   radius:
     image: atb00ker/ready-to-run:openwisp-radius
     build: 
       context: build
       dockerfile: openwisp_radius/Dockerfile
+      args:
+        RADIUS_APP_PORT: $RADIUS_APP_PORT
     deploy:
       replicas: 1
+    env_file:
+      - .env
     depends_on:
       - postgres
-    environment:
-      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
-      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
-      - DB_ENGINE=${DB_ENGINE}
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DJANGO_LANGUAGE_CODE=${DJANGO_LANGUAGE_CODE}
-      - DJANGO_TIME_ZONE=${DJANGO_TIME_ZONE}
-      - DJANGO_DEBUG=${DJANGO_DEBUG}
-      - DJANGO_DEFAULT_FROM_EMAIL=${DJANGO_DEFAULT_FROM_EMAIL}
-      - DJANGO_EMAIL_PORT=${DJANGO_EMAIL_PORT}
-      - DJANGO_EMAIL_BACKEND=${DJANGO_EMAIL_BACKEND}
-      - OPENWISP_DASHBOARD_PROTOCOL=${OPENWISP_DASHBOARD_PROTOCOL}
-      - OPENWISP_DASHBOARD_HOST=${OPENWISP_DASHBOARD_HOST}
-      - OPENWISP_DASHBOARD_LISTEN_PORT=${OPENWISP_DASHBOARD_LISTEN_PORT}
-      - CONTAINER_PORT=${RADIUS_APP_PORT}
-    volumes:
-      - /opt/openwisp/static/:/opt/openwisp/static/
+      - dashboard
 
   topology:
     image: atb00ker/ready-to-run:openwisp-topology
     build: 
       context: build
       dockerfile: openwisp_topology/Dockerfile
+      args:
+        TOPOLOGY_APP_PORT: $TOPOLOGY_APP_PORT
     deploy:
       replicas: 1
-    environment:
-      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
-      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
-      - DB_ENGINE=${DB_ENGINE}
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DJANGO_LANGUAGE_CODE=${DJANGO_LANGUAGE_CODE}
-      - DJANGO_TIME_ZONE=${DJANGO_TIME_ZONE}
-      - REDIS_HOST=${REDIS_HOST}
-      - DJANGO_DEBUG=${DJANGO_DEBUG}
-      - DJANGO_DEFAULT_FROM_EMAIL=${DJANGO_DEFAULT_FROM_EMAIL}
-      - DJANGO_EMAIL_PORT=${DJANGO_EMAIL_PORT}
-      - DJANGO_EMAIL_BACKEND=${DJANGO_EMAIL_BACKEND}
-      - OPENWISP_DASHBOARD_PROTOCOL=${OPENWISP_DASHBOARD_PROTOCOL}
-      - OPENWISP_DASHBOARD_HOST=${OPENWISP_DASHBOARD_HOST}
-      - OPENWISP_DASHBOARD_LISTEN_PORT=${OPENWISP_DASHBOARD_LISTEN_PORT}
-      - CONTAINER_PORT=${TOPOLOGY_APP_PORT}
+    env_file:
+      - .env
     depends_on:
       - postgres
+      - dashboard
+
+  orchestration:
+    image: atb00ker/ready-to-run:openwisp-orchestration
+    build: 
+      context: build
+      dockerfile: openwisp_orchestration/Dockerfile
+    env_file:
+      - .env
     volumes:
-      - /opt/openwisp/static/:/opt/openwisp/static/
+      - openwisp_certs:/etc/letsencrypt
 
   nginx:
     image: atb00ker/ready-to-run:openwisp-nginx
@@ -138,22 +88,15 @@ services:
       dockerfile: nginx/Dockerfile
     deploy:
       replicas: 1
+    env_file:
+      - .env
     volumes:
-      - /opt/openwisp/static/:/opt/openwisp/static/:ro
-    environment:
-      - DASHBOARD_APP_PORT=${DASHBOARD_APP_PORT}
-      - CONTROLLER_APP_PORT=${CONTROLLER_APP_PORT}
-      - RADIUS_APP_PORT=${RADIUS_APP_PORT}
-      - TOPOLOGY_APP_PORT=${TOPOLOGY_APP_PORT}
-      - OPENWISP_DASHBOARD_LISTEN_PORT=${OPENWISP_DASHBOARD_LISTEN_PORT}
-      - OPENWISP_CONTROLLER_LISTEN_PORT=${OPENWISP_CONTROLLER_LISTEN_PORT}
-      - OPENWISP_RADIUS_LISTEN_PORT=${OPENWISP_RADIUS_LISTEN_PORT}
-      - OPENWISP_TOPOLOGY_LISTEN_PORT=${OPENWISP_TOPOLOGY_LISTEN_PORT}
+      - openwisp_certs:/etc/letsencrypt:ro
+      - openwisp_static:/opt/openwisp/static:ro
+      - openwisp_media:/opt/openwisp/media:ro
     ports:
-      - "8080:8080"
-      - "8081:8081"
-      - "8082:8082"
-      - "8083:8083"
+      - "80:80"
+      - "443:443"
     depends_on:
       - dashboard
       - controller
@@ -164,14 +107,16 @@ services:
     image: mdillon/postgis:10-alpine
     deploy:
       replicas: 1
+    environment:
+      - POSTGRES_DB=$DB_NAME
+      - POSTGRES_USER=$DB_USER
+      - POSTGRES_PASSWORD=$DB_PASS
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASS}
     ports:
       - "5432:5432"
+    depends_on:
+      - orchestration
 
   redis:
     image: redis:alpine
@@ -182,4 +127,6 @@ services:
 
 volumes:
   postgres_data: {}
+  openwisp_certs: {}
   openwisp_media: {}
+  openwisp_static: {}
