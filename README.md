@@ -1,5 +1,7 @@
 # OPENWISP Dockerization Prototype
 
+## This repository is deprecated in favor of https://github.com/openwisp/docker-openwisp
+
 I've tested installation of openwisp-controller, openwisp-network-topology, openwisp-radius & openwisp-dashboard with a redis instance and a postgresql instance.
 
 I've also tested horizontal scaling with docker swarm & kubernetes.
